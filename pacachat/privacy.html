@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Pacachat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #007AFF;
+            color: #1E1E1E;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #007AFF;
+        }
+
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            color: #000;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .app-name {
+            font-family: 'Merriweather', serif;
+            color: #007AFF;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        h2 {
+            font-family: 'Merriweather', serif;
+            color: #007AFF;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-family: 'Lato', sans-serif;
+            color: #007AFF;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        strong {
+            color: #1E1E1E;
+        }
+
+        .highlight-box {
+            background: #E6F2FF;
+            border-left: 4px solid #007AFF;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 14px 35px;
+            background: #007AFF;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-family: 'Lato', sans-serif;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(0, 122, 255, 0.3);
+        }
+
+        .back-link:hover {
+            background: #0056D6;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #E6F2FF;
+            margin: 30px 0;
+        }
+
+        a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <p class="app-name">Pacachat</p>
+            <h1>Privacy Policy</h1>
+            <p class="last-updated">Last Updated: September 30, 2025</p>
+        </div>
+
+        <h2>Introduction</h2>
+        <p>Pacachat ("we", "our", or "the app") is a privacy-first AI chat application developed by Whiskey Danger. This Privacy Policy explains how Pacachat handles your information when you use our mobile application.</p>
+
+        <h2>Our Privacy-First Commitment</h2>
+        <div class="highlight-box">
+            <p><strong>Pacachat is designed with privacy as a core principle.</strong> Unlike cloud-based AI chat services, Pacachat connects directly to your local Ollama instance, ensuring your conversations never leave your control.</p>
+        </div>
+
+        <h2>Information We Collect and Store</h2>
+
+        <h3>Data Stored Locally on Your Device</h3>
+        <p>All data in Pacachat is stored locally on your device using AsyncStorage. We collect and store the following information solely on your device:</p>
+        <ol>
+            <li><strong>Chat Conversations</strong>: All chat threads and messages you create within the app</li>
+            <li><strong>Server Configuration</strong>: Your Ollama server address and selected AI model</li>
+            <li><strong>App Preferences</strong>: Your settings including:
+                <ul>
+                    <li>Context window configuration</li>
+                    <li>Sound effect preferences</li>
+                    <li>UI preferences</li>
+                </ul>
+            </li>
+            <li><strong>Session State</strong>: Your current thread ID and welcome screen status</li>
+        </ol>
+
+        <h3>Data We Do NOT Collect</h3>
+        <ul>
+            <li><strong>No Cloud Storage</strong>: We do not store any of your data on our servers</li>
+            <li><strong>No Analytics</strong>: We do not collect usage analytics or telemetrics</li>
+            <li><strong>No Personal Information</strong>: We do not collect your name, email, or any personal identifiers</li>
+            <li><strong>No Third-Party Tracking</strong>: We do not use third-party tracking or advertising services</li>
+            <li><strong>No Account Data</strong>: The app does not require account creation or authentication</li>
+        </ul>
+
+        <h2>How Your Data is Used</h2>
+        <p>All data collected is used exclusively to:</p>
+        <ul>
+            <li>Maintain your chat conversations and history</li>
+            <li>Remember your Ollama server connection settings</li>
+            <li>Preserve your app preferences between sessions</li>
+            <li>Provide core app functionality</li>
+        </ul>
+
+        <h2>Data Sharing and Transmission</h2>
+
+        <h3>Local Network Only</h3>
+        <p>Pacachat communicates exclusively with your local Ollama server:</p>
+        <ul>
+            <li>All AI requests are sent directly to your self-hosted Ollama instance</li>
+            <li>Communication occurs only on your local network</li>
+            <li>No data is transmitted to external servers or third parties</li>
+            <li>No data leaves your local network unless your Ollama instance is configured to do so</li>
+        </ul>
+
+        <h3>No Third-Party Services</h3>
+        <p>We do not share your data with any third parties. The app does not integrate with:</p>
+        <ul>
+            <li>Analytics services</li>
+            <li>Advertising networks</li>
+            <li>Cloud storage providers</li>
+            <li>Third-party APIs (except your own Ollama server)</li>
+        </ul>
+
+        <h2>Data Security</h2>
+
+        <h3>Local Storage Security</h3>
+        <ul>
+            <li>All data is stored using React Native AsyncStorage on your device</li>
+            <li>Data security depends on your device's operating system security measures</li>
+            <li>We recommend using device encryption and lock screen protection</li>
+        </ul>
+
+        <h3>Network Security</h3>
+        <ul>
+            <li>Communications with your Ollama server use HTTP/HTTPS as configured by you</li>
+            <li>We recommend using HTTPS and keeping your Ollama server on a trusted local network</li>
+            <li>The app supports network discovery on your local network only</li>
+        </ul>
+
+        <h2>Your Data Rights</h2>
+
+        <h3>Data Access and Control</h3>
+        <p>You have complete control over your data:</p>
+        <ul>
+            <li><strong>Access</strong>: All your data is stored locally on your device</li>
+            <li><strong>Deletion</strong>: You can delete individual chat threads or clear all app data through the app settings</li>
+            <li><strong>Export</strong>: Your data remains in standard formats on your device</li>
+            <li><strong>Portability</strong>: You can access your data through your device's file system (app data directory)</li>
+        </ul>
+
+        <h3>Data Retention</h3>
+        <ul>
+            <li>Data is retained on your device until you manually delete it</li>
+            <li>Uninstalling the app will remove all stored data from your device</li>
+            <li>We do not have access to your data and cannot recover it if lost</li>
+        </ul>
+
+        <h2>Children's Privacy</h2>
+        <p>Pacachat does not collect any personal information from anyone, including children under 13. However, parents and guardians should supervise children's use of AI chat applications and ensure appropriate content filters are in place on their Ollama instance.</p>
+
+        <h2>Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. Changes will be reflected in the "Last Updated" date at the top of this policy. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+
+        <h2>Open Source</h2>
+        <p>Pacachat is open source software. You can review our source code to verify our privacy practices at our GitHub repository.</p>
+
+        <h2>Contact</h2>
+        <p>For questions or concerns about this Privacy Policy, please contact:</p>
+        <p><strong>Whiskey Danger</strong><br>
+        Email: <a href="mailto:pacachat-support@whiskeydanger.com">pacachat-support@whiskeydanger.com</a></p>
+
+        <h2>Technical Details</h2>
+
+        <h3>Permissions</h3>
+        <p>Pacachat may request the following device permissions:</p>
+        <ul>
+            <li><strong>Network Access</strong>: To connect to your local Ollama server</li>
+            <li><strong>Storage</strong>: To save chat conversations and app preferences locally</li>
+        </ul>
+
+        <h3>Data Storage Location</h3>
+        <ul>
+            <li><strong>iOS</strong>: App data is stored in the app's sandboxed container using AsyncStorage</li>
+            <li><strong>Android</strong>: App data is stored in the app's private directory using AsyncStorage</li>
+        </ul>
+
+        <h3>Network Discovery</h3>
+        <p>The app includes optional network discovery features to help locate Ollama servers on your local network. This feature:</p>
+        <ul>
+            <li>Only scans your local network</li>
+            <li>Does not send data outside your network</li>
+            <li>Can be disabled by manually entering your server address</li>
+        </ul>
+
+        <h2>Compliance</h2>
+        <p>As Pacachat does not collect, transmit, or process personal data on external servers, it does not fall under the typical scope of data protection regulations like GDPR or CCPA. However, we maintain privacy-first principles that align with and exceed these standards.</p>
+
+        <h2>Disclaimer</h2>
+        <p>Pacachat is a client application that connects to self-hosted Ollama instances. We are not responsible for:</p>
+        <ul>
+            <li>The privacy practices of your Ollama installation</li>
+            <li>Any models you choose to run on your Ollama instance</li>
+            <li>Data handling by your Ollama server</li>
+            <li>Network security of your local environment</li>
+        </ul>
+        <p>Please review Ollama's documentation and privacy practices separately.</p>
+
+        <hr>
+
+        <div class="highlight-box">
+            <p><strong>Summary</strong>: Pacachat is a privacy-first application that stores all data locally on your device and only communicates with your self-hosted Ollama server on your local network. We do not collect, store, or transmit your personal information or conversations to any external services.</p>
+        </div>
+
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+</body>
+</html>
