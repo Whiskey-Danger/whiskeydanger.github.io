@@ -79,6 +79,81 @@
             box-shadow: 0 0 0 #1E1E1E;
         }
 
+        .work {
+            margin-top: 64px;
+            animation: fadeInUp 1s ease-out 0.9s backwards;
+        }
+
+        .work-label {
+            font-size: 0.95rem;
+            opacity: 0.55;
+            margin-bottom: 14px;
+        }
+
+        .work-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .work-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px 8px 8px;
+            color: #1E1E1E;
+            text-decoration: none;
+            text-align: left;
+            background: #FFFBEF;
+            border: 3px solid #1E1E1E;
+            border-radius: 18px;
+            box-shadow: 0 4px 0 #1E1E1E;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .work-item:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1E1E1E;
+        }
+
+        .work-item:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #1E1E1E;
+        }
+
+        .work-item:focus-visible,
+        .cta-button:focus-visible {
+            outline: 3px solid #D88B2D;
+            outline-offset: 4px;
+        }
+
+        .work-item img {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            border: 2.5px solid #1E1E1E;
+            background: #fff;
+        }
+
+        .work-item b {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .work-item small {
+            display: block;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -124,6 +199,18 @@
         </div>
 
         <a href="mailto:howdy@whiskeydanger.com" class="cta-button">Howdy, Partner - Let's Chat!</a>
+
+        <section class="work" aria-labelledby="work-label">
+            <p class="work-label" id="work-label">Things we've made</p>
+            <ul class="work-list">
+                <li>
+                    <a class="work-item" href="/pacachat/">
+                        <img src="/pacachat/assets/icon.png" alt="">
+                        <span><b>Pacachat</b><small>Private AI chat for iPhone and iPad</small></span>
+                    </a>
+                </li>
+            </ul>
+        </section>
     </div>
 </body>
 </html>
