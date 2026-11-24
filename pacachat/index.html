@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pacachat: private AI chat with your own computer</title>
+<meta name="description" content="Pacachat is a free iPhone and iPad app for chatting with Ollama on your own computer. Your conversations travel over your Wi-Fi and nowhere else.">
+<meta property="og:title" content="Pacachat: your AI, kept at home">
+<meta property="og:description" content="A free iPhone and iPad app for chatting with Ollama on your own computer. Your conversations travel over your Wi-Fi and nowhere else.">
+<meta property="og:image" content="https://whiskeydanger.com/pacachat/assets/og.jpg">
+<meta property="og:url" content="https://whiskeydanger.com/pacachat/">
+<meta name="twitter:card" content="summary">
+<meta name="apple-itunes-app" content="app-id=6753087483">
+<meta name="theme-color" content="#006EE6">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Corben:wght@400;700&family=Lato:wght@400;700;900&family=Merriweather:wght@700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#006EE6;        /* hero sky: the splash blue, a shade deeper so white text passes AA */
+  --blue:#007AFF;       /* the app's own blue */
+  --blue-2:#0062CC; --blue-3:#004999;
+  --night:#002A55; --night-2:#00376E;
+  --fleece:#FFFBEF; --shade:#EAE0CA;
+  --ink:#0E2240;        /* deep navy text */
+  --line:#000;          /* the mascot's linework */
+  --gold:#F5B83D; --gold-2:#DE9A1F; --gold-pale:#FCE6B4;
+  --red:#D6336C;        /* cochineal, the Andean dye red */
+  --pale:#E6F1FF;
+  --display:'Corben', 'Cooper Black', Georgia, serif;
+  --body:'Lato', system-ui, sans-serif;
+  --app-head:'Merriweather', Georgia, serif;
+  --code:'Source Code Pro', ui-monospace, monospace;
+  --spring:cubic-bezier(.3,1.5,.5,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:80px}
+body{margin:0; font:400 18px/1.6 var(--body); color:var(--ink); background:#fff; overflow-x:clip}
+img,svg{display:block}
+a{color:inherit}
+button{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--gold); outline-offset:3px; border-radius:6px}
+.sr{position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.wrap{width:min(1180px, 100% - 48px); margin-inline:auto}
+h1,h2,h3{font-family:var(--display); font-weight:700; margin:0; text-wrap:balance}
+h2{font-size:clamp(38px, 5vw, 70px); line-height:.98; letter-spacing:-.035em}
+h3{font-size:clamp(24px, 2.3vw, 32px); line-height:1.08; letter-spacing:-.02em}
+p{margin:0; text-wrap:pretty}
+.lede{font-size:clamp(19px,1.6vw,22px); line-height:1.55; max-width:36em}
+
+/* buttons: drawn with the mascot's thick ink line */
+.btn{display:inline-flex; align-items:center; gap:10px; white-space:nowrap; padding:14px 24px 15px; border:3px solid var(--line); border-radius:999px;
+  background:var(--fleece); color:var(--ink); font-weight:900; font-size:18px; text-decoration:none; cursor:pointer;
+  transition:transform .25s var(--spring), background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.96)}
+.btn svg{width:22px; height:22px; flex:none}
+.btn.ghost{background:transparent; color:inherit; border-color:currentColor}
+.btn.blue{background:var(--blue); color:#fff}
+
+/* ---------- the paca (built from one sprite) ---------- */
+.paca{--fleece:#FFFBEF; --shade:#EAE0CA; --face:#000}
+.paca-svg{width:100%; height:auto; overflow:visible}
+.pc-eyes ellipse{transform-box:fill-box; transform-origin:center; animation:blink 5.2s infinite}
+.pc-eyes ellipse + ellipse{animation-delay:.02s}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)} 96.5%{transform:scaleY(.1)}}
+.pc-closed{display:none}
+.asleep .pc-eyes{display:none}
+.asleep .pc-closed{display:inline}
+.breathe{animation:breathe 3.2s ease-in-out infinite; transform-origin:50% 100%}
+@keyframes breathe{0%,100%{transform:scale(1,1)} 50%{transform:scale(1.018,.982)}}
+.f-fawn{--fleece:#F1D7AE; --shade:#DDBA86}
+.f-caramel{--fleece:#D9A06A; --shade:#BC8350}
+.f-cocoa{--fleece:#946243; --shade:#774C31}
+.f-silver{--fleece:#D7DCE2; --shade:#B5BDC7}
+.f-charcoal{--fleece:#62626A; --shade:#4B4B52}
+.f-white{--fleece:#FFFFFF; --shade:#E4E8EE}
+
+/* ---------- nav ---------- */
+.nav{position:fixed; inset:0 0 auto; z-index:50; color:#fff; transition:background .3s, box-shadow .3s, color .3s}
+.nav .wrap{display:flex; align-items:center; gap:28px; height:72px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font:700 25px/1 var(--display); letter-spacing:-.02em}
+.brand .paca{width:38px}
+.nav-links{display:flex; gap:26px; margin-left:auto; font-weight:700; font-size:16px}
+.nav-links a{text-decoration:none; opacity:.92}
+.nav-links a:hover{opacity:1; text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:2px}
+.nav .btn{padding:9px 18px 10px; font-size:16px; border-width:2.5px}
+.nav.in-hero{background:rgba(0,110,230,.94); box-shadow:0 1px 0 rgba(255,255,255,.15); backdrop-filter:blur(10px)}
+.nav.scrolled{background:rgba(255,255,255,.94); color:var(--ink); box-shadow:0 1px 0 rgba(14,34,64,.12); backdrop-filter:blur(10px)}
+@media (max-width:820px){ .nav-links{display:none} .nav .btn{margin-left:auto} .brand{font-size:21px} .brand .paca{width:32px} }
+
+/* ---------- hero ---------- */
+.hero{position:relative; background:var(--sky); color:#fff; overflow:clip; isolation:isolate}
+.hero-grid{display:grid; grid-template-columns:minmax(0,4.9fr) minmax(0,6.1fr); gap:16px; align-items:end; min-height:min(100svh, 980px); padding-top:96px}
+.hero-copy{align-self:center; padding-bottom:clamp(40px, 9vw, 150px); position:relative; z-index:3}
+.hero h1{font-size:clamp(52px, 7.1vw, 114px); line-height:.92; letter-spacing:-.04em; margin-bottom:28px}
+.hero .lede{color:#fff; max-width:25em}
+.hero-cta{display:flex; flex-wrap:wrap; gap:14px; margin-top:34px}
+.hero-fine{margin-top:18px; font-size:15px; opacity:.9}
+.mtn{position:absolute; inset:auto 0 0; height:min(56vw, 560px); z-index:-1; width:100%}
+.sky-cloud{position:absolute; z-index:-1; width:var(--w); opacity:.38; will-change:transform; animation:drift var(--t) linear infinite}
+.sky-cloud.c1{--w:220px; top:16%; left:0; animation-duration:95s}
+.sky-cloud.c2{--w:150px; top:13%; left:0; animation-duration:130s; animation-delay:-60s}
+.sky-cloud.c3{--w:300px; top:7%; left:0; animation-duration:160s; animation-delay:-110s}
+@keyframes drift{from{transform:translateX(-340px)} to{transform:translateX(calc(100vw + 40px))}}
+.paused .sky-cloud,.paused .breathe,.paused .pc-eyes ellipse{animation-play-state:paused}
+
+.stage{position:relative; container-type:inline-size; aspect-ratio:100/86; align-self:end; z-index:2; -webkit-tap-highlight-color:transparent}
+.stage-in{position:absolute; inset:0}
+.st-hill{position:absolute; left:-140cqw; width:380cqw; top:57cqw; height:40cqw; overflow:visible}
+.st-trail{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none}
+.st-trail path{fill:none; stroke:#fff; stroke-width:.55; stroke-linecap:round; stroke-dasharray:.1 1.8; opacity:.85}
+.st-trail text{font:700 1.9px var(--body); fill:var(--ink); opacity:.75}
+
+/* the house, with the computer in the window */
+.house{position:absolute; left:57cqw; top:27.5cqw; width:40cqw; aspect-ratio:112/100}
+.house > svg:first-child{width:100%; height:100%}
+.win{position:absolute; left:44.6%; top:55%; width:44.6%; height:30%; border-radius:.5cqw; background:#0B1B33; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:center; gap:.6cqw; padding:0 1.4cqw; color:#BFD8FF; font:600 1.55cqw/1.2 var(--code)}
+.win .wm{display:flex; align-items:center; gap:.7cqw; color:#fff}
+.win .wm i{width:1cqw; height:1cqw; border-radius:50%; background:#4ADE80; flex:none}
+.win .wbars{display:flex; gap:.4cqw; height:1.2cqw}
+.win .wbars b{flex:1; background:#2B4C80; border-radius:.3cqw; transform-origin:left; transform:scaleX(.15)}
+.win.busy .wbars b{animation:tok 1s ease-in-out infinite; background:#5EA2FF}
+.win.busy .wbars b:nth-child(2){animation-delay:.12s} .win.busy .wbars b:nth-child(3){animation-delay:.24s} .win.busy .wbars b:nth-child(4){animation-delay:.36s}
+@keyframes tok{0%,100%{transform:scaleX(.15)} 50%{transform:scaleX(1)}}
+.wifi{position:absolute; left:78%; top:-2%; width:15%; overflow:visible}
+.wifi path{fill:none; stroke:#fff; stroke-width:7; stroke-linecap:round; opacity:.25}
+.wifi.on path{animation:wf .9s ease-out 2}
+.wifi.on path:nth-child(2){animation-delay:.12s} .wifi.on path:nth-child(3){animation-delay:.24s}
+@keyframes wf{0%{opacity:.25} 40%{opacity:1} 100%{opacity:.25}}
+
+/* the phone: a faithful sketch of the app */
+.phone{position:absolute; left:2cqw; top:1cqw; width:38cqw; height:78cqw; border:.9cqw solid var(--line); border-radius:6.4cqw; background:#fff;
+  overflow:hidden; display:flex; flex-direction:column; color:#000; box-shadow:0 2.4cqw 0 rgba(0,40,90,.22)}
+.ph-status{display:flex; justify-content:space-between; align-items:center; padding:1.6cqw 3.6cqw .4cqw; font:700 1.75cqw/1 var(--body)}
+.ph-status .island{width:9cqw; height:2.6cqw; background:#000; border-radius:2cqw}
+.ph-status .bat{width:3.4cqw; height:1.6cqw; border:.25cqw solid #000; border-radius:.5cqw; position:relative}
+.ph-status .bat::after{content:""; position:absolute; inset:.2cqw; right:.8cqw; background:#000; border-radius:.2cqw}
+.ph-head{display:grid; grid-template-columns:4cqw 1fr 4cqw; align-items:center; padding:1.2cqw 2.4cqw 1.4cqw; border-bottom:.15cqw solid #e6e6e6}
+.ph-head svg{width:3.2cqw; height:3.2cqw; stroke:var(--blue); fill:none; stroke-width:2.2; stroke-linecap:round}
+.ph-title{text-align:center; line-height:1.15}
+.ph-title b{display:block; font:700 2.35cqw/1.2 var(--app-head); transition:opacity .25s}
+.ph-title span{display:inline-block; margin-top:.4cqw; font:700 1.45cqw/1 var(--body); color:var(--blue)}
+.ph-chat{flex:1; background:#f5f5f5; padding:2.2cqw 2cqw; display:flex; flex-direction:column; gap:1.6cqw; overflow:hidden}
+.bub{max-width:80%; padding:1.3cqw 1.9cqw 1.4cqw; border-radius:2.8cqw; font:400 2.05cqw/1.38 var(--body)}
+.bub.me{align-self:flex-end; background:var(--blue); color:#fff; border-bottom-right-radius:.9cqw}
+.bub.ai{align-self:flex-start; background:#fff; color:#000; border-bottom-left-radius:.9cqw; box-shadow:0 .2cqw .5cqw rgba(0,0,0,.06)}
+.bub.pop{animation:pop .42s var(--spring)}
+@keyframes pop{from{transform:scale(.6); opacity:0}}
+.shimmer{font-weight:700; color:#9aa3ad; background:linear-gradient(90deg,#9aa3ad 0 35%,#e3e8ee 50%,#9aa3ad 65% 100%) 0 0/300% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:shim 1.3s linear infinite}
+@keyframes shim{from{background-position:100% 0} to{background-position:0 0}}
+.ph-input{display:flex; gap:1.2cqw; align-items:center; padding:1.4cqw 2cqw 3cqw; background:#f5f5f5; border-top:.15cqw solid #e6e6e6}
+.ph-field{flex:1; min-height:5cqw; background:#fff; border-radius:2.6cqw; padding:1.2cqw 2cqw; font:400 2cqw/1.3 var(--body); color:#000; border:.15cqw solid #e3e3e3}
+.ph-field:empty::before{content:"Type your message..."; color:#9a9a9a}
+.ph-send{width:5cqw; height:5cqw; border-radius:50%; background:var(--blue); display:grid; place-items:center; flex:none; transition:transform .16s}
+.ph-send svg{width:2.6cqw; height:2.6cqw; stroke:#fff; stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.ph-send.press{transform:scale(.82)}
+
+/* the hero paca + the message it carries */
+.hero-paca{position:absolute; left:0; top:0; width:16.5cqw; transform:translate(36cqw,57cqw); transform-origin:50% 100%;
+  background:none; border:0; padding:0; cursor:pointer; z-index:5}
+.hero-paca:focus-visible{outline-offset:6px; border-radius:40%}
+.cargo{position:absolute; left:52%; top:-14%; width:9cqw; height:5.4cqw; border-radius:2.2cqw 2.2cqw 2.2cqw .7cqw; border:.45cqw solid var(--line);
+  display:flex; align-items:center; justify-content:center; gap:.6cqw; opacity:0; transform:scale(.4) rotate(-8deg); transition:opacity .15s, transform .35s var(--spring)}
+.cargo i{width:1cqw; height:1cqw; border-radius:50%; background:currentColor}
+.cargo.me,.mini.me{background:var(--blue); color:#fff}
+.cargo.ai,.mini.ai{background:#fff; color:#111}
+.cargo.on{opacity:1; transform:scale(1) rotate(-8deg)}
+.mini{position:absolute; z-index:6; border-radius:2.2cqw 2.2cqw 2.2cqw .7cqw; border:.45cqw solid var(--line); display:flex; align-items:center; justify-content:center; gap:.6cqw; pointer-events:none}
+.mini i{width:1cqw; height:1cqw; border-radius:50%; background:currentColor}
+.say{position:absolute; left:23cqw; top:44cqw; padding:1.1cqw 2cqw 1.3cqw; background:var(--fleece); color:var(--ink); border:.45cqw solid var(--line);
+  border-radius:2.4cqw; font:900 1.9cqw/1.1 var(--body); white-space:nowrap; opacity:0; transform:translateY(1cqw) scale(.9); transition:.35s var(--spring); pointer-events:none; z-index:6}
+.say::after{content:""; position:absolute; left:62%; bottom:-1.6cqw; width:2cqw; height:2cqw; background:var(--fleece); border:solid var(--line); border-width:0 .45cqw .45cqw 0; transform:rotate(45deg)}
+.say.on{opacity:1; transform:none}
+.pc-mouth.chew{animation:chew .32s ease-in-out infinite; transform-box:fill-box; transform-origin:center}
+@keyframes chew{0%,100%{transform:translateX(0) scaleY(1)} 50%{transform:translateX(6%) scaleY(.6)}}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr; min-height:0; padding-top:108px; gap:8px}
+  .hero-copy{padding-bottom:0}
+  .stage{width:calc(100% + 48px); max-width:680px; margin:10px -24px 0; justify-self:center}
+  .sky-cloud.c2{display:none}
+}
+
+/* ---------- woven band (section seams) ---------- */
+.weave{height:34px; background:var(--w) repeat-x 0 0/40px 34px; position:relative; z-index:4}
+.weave.red{--w:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='34'%3E%3Crect width='40' height='34' fill='%23D6336C'/%3E%3Crect width='40' height='3' fill='%23000'/%3E%3Crect y='3' width='40' height='4' fill='%23F5B83D'/%3E%3Crect y='27' width='40' height='4' fill='%23F5B83D'/%3E%3Crect y='31' width='40' height='3' fill='%23000'/%3E%3Cpath d='M9 9h2v2h2v2h2v2h2v4h-2v2h-2v2h-2v2H9v-2H7v-2H5v-2H3v-4h2v-2h2v-2h2z' fill='%23FFFBEF'/%3E%3Cpath d='M29 9h2v2h2v2h2v2h2v4h-2v2h-2v2h-2v2h-2v-2h-2v-2h-2v-2h-2v-4h2v-2h2v-2h2z' fill='%23F5B83D'/%3E%3Crect x='8' y='15' width='4' height='4' fill='%23007AFF'/%3E%3Crect x='28' y='15' width='4' height='4' fill='%23000'/%3E%3C/svg%3E")}
+.weave.blue{--w:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='34'%3E%3Crect width='40' height='34' fill='%230062CC'/%3E%3Crect width='40' height='3' fill='%23000'/%3E%3Crect y='3' width='40' height='4' fill='%23D6336C'/%3E%3Crect y='27' width='40' height='4' fill='%23D6336C'/%3E%3Crect y='31' width='40' height='3' fill='%23000'/%3E%3Cpath d='M0 17l4-4 4 4-4 4zM20 17l4-4 4 4-4 4z' fill='%23F5B83D'/%3E%3Cpath d='M10 9h2v2h2v2h2v2h2v4h-2v2h-2v2h-2v2h-2v-2H8v-2H6v-2H4v-4h2v-2h2v-2h2z' fill='%23FFFBEF' transform='translate(4 0)'/%3E%3Crect x='12' y='15' width='4' height='4' fill='%23D6336C'/%3E%3C/svg%3E")}
+
+/* ---------- how it works ---------- */
+.how{background:var(--pale); padding:clamp(80px,10vw,140px) 0 clamp(80px,9vw,130px)}
+.how-head{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:40px; align-items:end; margin-bottom:28px}
+.steps{position:relative; margin-top:56px}
+.step{transition:opacity .5s, transform .5s var(--spring)}
+.steps.armed .step{opacity:.55}
+.steps.armed .step.active,.steps.armed .step.reached{opacity:1}
+.step.active{transform:translateY(-6px)}
+.num{position:relative}
+.num::after{content:""; position:absolute; inset:-3px; border-radius:50%; border:3px solid var(--blue); opacity:0}
+.step.active:not(.reached) .num::after{animation:ring 1.3s ease-out infinite}
+@keyframes ring{from{transform:scale(1); opacity:.9} to{transform:scale(1.7); opacity:0}}
+.code pre .ps{color:#6F8DB8}
+.code pre .ln{display:block; color:#9DB4D6}
+.code pre .ln.gold{color:var(--gold)}
+.code pre .ln.ok{color:#6EE7A0}
+.code pre .caret{display:inline-block; width:.55em; height:1.1em; margin-left:1px; vertical-align:-.18em; background:#DCEBFF; animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.term1 pre{min-height:calc(14px * 1.5 * 6 + 29px)}
+.term2 pre{min-height:calc(14px * 1.5 * 2 + 29px)}
+.hello{position:relative; margin-top:18px; padding-top:70px; overflow:clip; display:inline-block; padding-right:6px}
+.hello .paca{position:absolute; left:22px; top:6px; width:80px; transform:translateY(64px); transition:transform .7s var(--spring)}
+.hello.on .paca{transform:none}
+.hello .connected{position:relative; z-index:1; margin-top:0}
+.connected.searching i{background:#A8B4C4; box-shadow:0 0 0 4px #E3E9F1; animation:blinkdot 1s ease-in-out infinite}
+@keyframes blinkdot{50%{opacity:.35}}
+.replay{margin-top:40px; display:inline-flex; align-items:center; gap:8px; background:none; border:3px solid var(--line); border-radius:999px; padding:9px 18px 10px; font-weight:900; font-size:16px; cursor:pointer; transition:transform .25s var(--spring), opacity .3s}
+.replay svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round}
+.replay:active{transform:scale(.96)}
+.replay[hidden]{display:inline-flex; opacity:0; pointer-events:none}
+.steps ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(20px,3vw,44px)}
+.step{position:relative}
+.num{display:grid; place-items:center; width:54px; height:54px; border-radius:50%; border:3px solid var(--line); background:#fff;
+  font:700 24px/1 var(--display); margin-bottom:22px; transition:background .3s, color .3s, transform .45s var(--spring)}
+.step.reached .num{background:var(--blue); color:#fff; transform:scale(1.08)}
+.step h3{margin-bottom:12px}
+.step p{max-width:24em}
+.code{margin-top:18px; background:var(--night); color:#DCEBFF; border:3px solid var(--line); border-radius:16px; overflow:hidden}
+.code-top{display:flex; justify-content:space-between; align-items:center; padding:7px 10px 7px 16px; background:#0B3A70; color:#9FC2EE; font:700 13px/1 var(--body)}
+.code pre{margin:0; padding:14px 16px 15px; font:400 14px/1.5 var(--code); overflow-x:auto}
+.code .k{color:var(--gold)}
+.copy{background:#16508F; color:#fff; border:0; border-radius:8px; padding:6px 10px; font:700 13px/1 var(--body); cursor:pointer}
+.copy:active{transform:scale(.94)}
+.small{font-size:15px; margin-top:10px; opacity:.85}
+.connected{display:inline-flex; align-items:center; gap:10px; margin-top:18px; padding:10px 16px; border:3px solid var(--line); border-radius:999px; background:#fff; font-weight:900; font-size:16px}
+.connected i{width:12px; height:12px; border-radius:50%; background:#22A55A; box-shadow:0 0 0 4px #CFF3DD}
+@media (max-width:820px){
+  .how-head{grid-template-columns:1fr}
+  .steps ol{grid-template-columns:1fr; gap:44px}
+}
+
+/* ---------- features ---------- */
+.feats{padding:clamp(90px,10vw,150px) 0 clamp(110px,12vw,170px); background:#fff}
+.feats > .wrap > h2{max-width:11em; margin-bottom:clamp(50px,6vw,80px)}
+.panel{position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:clamp(30px,5vw,80px); align-items:center;
+  padding:clamp(34px,5vw,70px); border-radius:44px; margin-bottom:clamp(60px,7vw,96px)}
+.panel.flip{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+.panel.flip .p-copy{order:2}
+.panel h3{font-size:clamp(30px,3.2vw,46px); line-height:1; letter-spacing:-.03em; margin-bottom:18px}
+.panel .p-copy p{font-size:19px; max-width:27em}
+.panel::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--pbg)}
+.panel:last-child{margin-bottom:0}
+.p-blue{--pbg:var(--blue); color:#fff}
+.p-night{--pbg:var(--night); color:#fff}
+.p-gold{--pbg:var(--gold); color:var(--ink)}
+.p-pale{--pbg:var(--pale)}
+.peek{position:absolute; z-index:-2; width:150px}
+.peek.top-l{top:-80px; left:9%}
+.peek.top-r{top:-76px; right:12%}
+.peek.side-r{right:-74px; top:26%; width:140px}
+.peek.side-l{left:-72px; bottom:16%; width:136px}
+@media (max-width:900px){
+  .panel,.panel.flip{grid-template-columns:1fr; border-radius:32px; padding:34px 18px 22px}
+  .panel .p-copy{padding:0 8px}
+  .m-head b{font-size:16px}
+  .panel.flip .p-copy{order:0}
+  .peek.side-r,.peek.side-l{display:none}
+  .peek{width:110px} .peek.top-l{top:-64px} .peek.top-r{top:-62px}
+}
+
+/* shared mock device look */
+.mock{background:#fff; color:#000; border:3px solid var(--line); border-radius:28px; overflow:hidden; font-family:var(--body); max-width:470px; width:100%; justify-self:center}
+.m-head{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #eaeaea}
+.m-head b{font:700 18px/1.2 var(--app-head)}
+.m-head > *{white-space:nowrap}
+.m-head button{border:0; background:none; color:var(--blue); font-weight:700; font-size:16px; cursor:pointer; padding:4px 0}
+.m-body{background:#f5f5f5; padding:16px}
+
+/* threads */
+.threads{display:flex; flex-direction:column; gap:10px; min-height:316px}
+.thread{display:grid; grid-template-columns:1fr auto; gap:2px 12px; background:#fff; border-radius:14px; padding:12px 14px; border:1px solid #ececec}
+.thread b{font-weight:700; font-size:16px; line-height:1.3}
+.thread small{color:#8a8a8a; font-size:13px; align-self:start; padding-top:2px}
+.thread span{grid-column:1/-1; color:#666; font-size:14px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.thread.fresh{box-shadow:0 0 0 2px var(--blue)}
+
+/* code reply */
+.reply{background:#fff; border-radius:18px 18px 18px 6px; padding:16px 18px; font-size:15.5px; line-height:1.5; position:relative}
+.reply p + p,.reply p + .cb,.reply .cb + p{margin-top:10px}
+.reply ul{margin:8px 0 0; padding-left:20px}
+.cb{background:#1E1E2A; color:#E7E9F2; border-radius:12px; overflow:hidden; font:400 13.5px/1.55 var(--code)}
+.cb-top{display:flex; justify-content:space-between; align-items:center; padding:7px 12px; background:#2A2A38; color:#A9B0C8; font:600 12px/1 var(--body)}
+.cb-top button{border:0; background:#3A3A4E; color:#fff; border-radius:6px; padding:5px 9px; font:700 12px/1 var(--body); cursor:pointer}
+.cb pre{margin:0; padding:12px 14px; overflow-x:auto}
+.t-k{color:#C792EA} .t-f{color:#82AAFF} .t-s{color:#C3E88D} .t-c{color:#7F8AA8} .t-n{color:#F78C6C}
+.copied{position:absolute; right:14px; bottom:-14px; background:rgba(255,255,255,.95); color:#000; border:2px solid var(--line); border-radius:999px; padding:4px 12px;
+  font-size:13px; font-weight:700; opacity:0; transform:translateY(6px); transition:.3s var(--spring); pointer-events:none}
+.copied.on{opacity:1; transform:none}
+.reply.ripple{animation:ripple .55s ease-out}
+@keyframes ripple{0%{box-shadow:0 0 0 0 rgba(0,122,255,.55)} 100%{box-shadow:0 0 0 14px rgba(0,122,255,0)}}
+
+/* server scan */
+.scan{display:grid; gap:14px; justify-items:center; padding:22px 18px 20px; min-height:330px; align-content:start}
+.radar{position:relative; width:150px; aspect-ratio:1; border-radius:50%; border:3px solid var(--line); background:radial-gradient(circle,#EAF3FF 0 30%,#D7E8FF 31% 60%,#C3DCFF 61%); overflow:hidden}
+.radar::before{content:""; position:absolute; inset:0; background:conic-gradient(from 0deg, rgba(0,122,255,.0) 0 75%, rgba(0,122,255,.55) 100%); border-radius:50%; opacity:0}
+.radar.go::before{opacity:1; animation:sweep 1.4s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.radar .me{position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px; border-radius:50%; background:var(--blue); border:2px solid #fff}
+.radar .dot{position:absolute; width:12px; height:12px; margin:-6px; border-radius:50%; background:#22A55A; border:2px solid #fff; transform:scale(0); transition:transform .4s var(--spring)}
+.radar .dot.on{transform:scale(1)}
+.scan-note{font-size:14px; color:#666; min-height:1.4em}
+.servers{display:grid; gap:8px; width:100%}
+.server{display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e6e6e6; border-radius:12px; padding:11px 14px; font:600 14px/1.2 var(--code);
+  opacity:0; transform:translateY(8px); transition:.35s var(--spring)}
+.server.on{opacity:1; transform:none}
+.server em{font:700 14px/1 var(--body); font-style:normal; color:var(--blue)}
+
+/* model parameters */
+.params{padding:18px; display:grid; gap:18px}
+.models{display:flex; flex-wrap:wrap; gap:8px}
+.chip{border:2px solid #d9d9d9; background:#fff; border-radius:999px; padding:7px 13px; font:600 14px/1 var(--code); cursor:pointer; transition:.2s}
+.chip[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff}
+.prm label{display:flex; justify-content:space-between; font-weight:700; font-size:15px}
+.prm label output{font:600 15px/1 var(--code); color:var(--blue)}
+.prm small{display:block; color:#777; font-size:13px; margin:2px 0 8px}
+.prm input[type=range]{width:100%; accent-color:var(--blue)}
+.sample{background:#fff; border-radius:16px 16px 16px 6px; padding:12px 15px; font-size:15px; line-height:1.45; min-height:66px}
+.sample .q{display:block; color:#888; font-size:12.5px; font-weight:700; margin-bottom:3px}
+.toggle-row{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15px; background:#fff; border-radius:12px; padding:10px 14px}
+.switch{width:52px; height:31px; border-radius:999px; border:0; background:#d4d4d4; position:relative; cursor:pointer; transition:background .25s}
+.switch::after{content:""; position:absolute; left:2px; top:2px; width:27px; height:27px; border-radius:50%; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,.25); transition:transform .3s var(--spring)}
+.switch[aria-checked="true"]{background:#34C759}
+.switch[aria-checked="true"]::after{transform:translateX(21px)}
+
+/* ---------- night: the promise ---------- */
+.night{position:relative; background:var(--night); color:#fff; overflow:clip; isolation:isolate; padding:clamp(100px,11vw,170px) 0 0}
+.stars{position:absolute; inset:0; width:100%; height:100%; z-index:-2}
+.twinkles{position:absolute; inset:0 0 30%; z-index:-2; pointer-events:none}
+.twinkles i{position:absolute; width:3px; height:3px; border-radius:50%; background:#fff; box-shadow:0 0 6px 1px rgba(255,255,255,.6); will-change:opacity; animation:tw 3.5s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.25} 50%{opacity:1}}
+.paused .twinkles i{animation-play-state:paused}
+.milky{position:absolute; z-index:-2; inset:0; width:100%; height:100%; pointer-events:none}
+.yacana{opacity:0; transition:opacity 4s ease}
+.night.seen .yacana{opacity:1}
+.night-grid{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:clamp(30px,5vw,80px); align-items:start}
+.night h2{max-width:9em; margin-bottom:26px}
+.night .lede{color:#DCE8FA}
+.facts{list-style:none; margin:6px 0 0; padding:0; display:grid; gap:2px}
+.facts li{display:flex; gap:14px; align-items:flex-start; padding:15px 0; border-bottom:1px solid rgba(255,255,255,.16); font-size:19px}
+.facts li:last-child{border-bottom:0}
+.facts svg{width:26px; height:26px; flex:none; margin-top:1px}
+.facts a{color:var(--gold); font-weight:700}
+.night-land{position:relative; height:clamp(220px,26vw,340px); margin-top:clamp(40px,6vw,80px)}
+.night-land svg.ridge{position:absolute; inset:auto 0 0; width:100%; height:100%}
+.sleeper{position:absolute; left:16%; bottom:18%; width:clamp(110px,12vw,160px); z-index:2}
+.zz{position:absolute; left:78%; top:-8%; font:700 28px/1 var(--display); color:#DCE8FA; pointer-events:none}
+.zz span{position:absolute; opacity:0; animation:zz 4.2s ease-out infinite}
+.zz span:nth-child(2){animation-delay:1.4s; font-size:.75em} .zz span:nth-child(3){animation-delay:2.8s; font-size:.55em}
+@keyframes zz{0%{opacity:0; transform:translate(0,0)} 20%{opacity:1} 100%{opacity:0; transform:translate(40px,-80px)}}
+.paused .zz span{animation-play-state:paused}
+.night.seen .zz{display:none}
+.night.seen .sleeper .pc-eyes{translate:0 -6px}
+.y-note{position:absolute; left:34%; top:0; max-width:290px; font-size:15px; line-height:1.45; color:#DCE8FA; opacity:0; transition:opacity 1.2s 2.5s}
+.night.seen .y-note{opacity:1}
+.n-house{position:absolute; right:14%; bottom:22%; width:clamp(110px,13vw,170px)}
+@media (max-width:900px){ .night-grid{grid-template-columns:1fr} .y-note{position:static; margin:0 auto 20px; width:min(100% - 48px, 420px)} }
+
+/* ---------- FAQ ---------- */
+.faq{background:var(--gold); padding:clamp(90px,10vw,140px) 0}
+.faq-grid{display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:clamp(30px,5vw,80px)}
+.faq h2{margin-bottom:22px}
+.faq-aside p{max-width:22em}
+.faq-aside a{font-weight:900}
+.qa{border-top:3px solid var(--line)}
+.qa:last-child{border-bottom:3px solid var(--line)}
+.qa summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; gap:20px; align-items:center; padding:22px 0; font:400 clamp(21px,1.9vw,25px)/1.25 var(--display); letter-spacing:-.01em}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary .x{flex:none; width:38px; height:38px; border-radius:50%; border:3px solid var(--line); display:grid; place-items:center; background:var(--fleece); transition:transform .4s var(--spring), background .25s}
+.qa summary .x svg{width:16px; height:16px; stroke:var(--line); stroke-width:3; stroke-linecap:round}
+.qa[open] summary .x{transform:rotate(45deg); background:var(--red)}
+.qa[open] summary .x svg{stroke:#fff}
+.qa .a{padding:0 60px 24px 0; font-size:18px}
+.qa .a p + p{margin-top:10px}
+.qa code{font:600 15px var(--code); background:rgba(255,255,255,.5); padding:2px 6px; border-radius:6px}
+@media (max-width:900px){ .faq-grid{grid-template-columns:1fr} .qa .a{padding-right:0} }
+
+/* ---------- closing ---------- */
+.join{position:relative; background:var(--sky); color:#fff; text-align:center; overflow:clip; isolation:isolate; padding:clamp(110px,12vw,170px) 0 0}
+.join h2{font-size:clamp(46px,6.4vw,98px); letter-spacing:-.04em; line-height:.95; max-width:9.5em; margin:0 auto 22px}
+.join .lede{margin:0 auto 34px; color:#fff; max-width:30em}
+.parade{position:relative; height:clamp(200px,21vw,290px); margin-top:clamp(50px,6vw,90px)}
+.parade svg.ground{position:absolute; inset:auto 0 0; width:100%; height:60%; z-index:2}
+.herd{position:absolute; left:0; right:0; bottom:47%; display:flex; justify-content:center; align-items:flex-end; gap:clamp(4px,1.4vw,22px)}
+.herd .hp{width:clamp(62px,8.4vw,118px); background:none; border:0; padding:0; cursor:pointer; transform:translateY(105%); transition:transform .9s var(--spring); transition-delay:var(--dl); position:relative}
+.herd .hp .say2{position:absolute; left:50%; bottom:100%; translate:-50% -6px; background:var(--fleece); color:var(--ink); border:2.5px solid var(--line); border-radius:12px; padding:4px 9px; font:900 13px/1.1 var(--body); white-space:nowrap; opacity:0; transition:opacity .25s; pointer-events:none}
+.herd .hp.talk .say2{opacity:1}
+.join.up .herd .hp{transform:translateY(var(--sink))}
+footer{background:var(--blue-3); color:#DCE8FA; padding:30px 0 40px; font-size:15px; position:relative; z-index:3}
+footer .wrap{display:flex; flex-wrap:wrap; gap:14px 30px; align-items:center}
+footer nav{display:flex; flex-wrap:wrap; gap:8px 24px; margin-left:auto}
+footer a{color:#fff; font-weight:700; text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; scroll-behavior:auto!important}
+  .sky-cloud{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- sprite: the paca is one shape, recoloured for the whole herd -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="pc-shape">
+      <circle cx="100" cy="110" r="60"/>
+      <circle cx="100" cy="50" r="25"/><circle cx="140" cy="64" r="25"/><circle cx="161" cy="100" r="25"/>
+      <circle cx="154" cy="140" r="25"/><circle cx="121" cy="166" r="25"/><circle cx="79" cy="166" r="25"/>
+      <circle cx="46" cy="140" r="25"/><circle cx="39" cy="100" r="25"/><circle cx="60" cy="64" r="25"/>
+    </g>
+    <clipPath id="pc-clip"><use href="#pc-shape"/></clipPath>
+    <path id="pc-earL" d="M70 60 C 58 52, 49 34, 53 12 C 70 17, 84 34, 86 52 Z"/>
+    <path id="pc-earR" d="M130 60 C 142 52, 151 34, 147 12 C 130 17, 116 34, 114 52 Z"/>
+    <g id="cloud-grey"><path d="M30 70 C 6 70, 6 42, 30 42 C 32 20, 66 14, 78 32 C 92 14, 128 20, 126 44 C 150 42, 152 70, 128 70 Z"/></g>
+  </defs>
+</svg>
+
+<header class="nav" data-nav>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Pacachat home"><span class="paca" data-paca></span>Pacachat</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#how">Set up</a><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn" href="https://apps.apple.com/us/app/pacachat-local-ai-chat/id6753087483">Get the app</a>
+  </div>
+</header>
+
+<main id="top">
+<!-- ===================== HERO ===================== -->
+<section class="hero" aria-labelledby="hero-h" data-hero>
+  <svg class="sky-cloud c1" viewBox="0 0 160 80" fill="#C9D8EC" aria-hidden="true"><use href="#cloud-grey"/></svg>
+  <svg class="sky-cloud c2" viewBox="0 0 160 80" fill="#C9D8EC" aria-hidden="true"><use href="#cloud-grey"/></svg>
+  <svg class="sky-cloud c3" viewBox="0 0 160 80" fill="#C9D8EC" aria-hidden="true"><use href="#cloud-grey"/></svg>
+  <svg class="mtn" viewBox="0 0 1440 560" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 440 L130 410 L270 445 L420 400 L560 440 L680 370 L780 260 L870 310 L980 150 L1090 250 L1200 110 L1320 230 L1440 170 V560 H0Z" fill="#0062CC"/>
+    <path d="M980 150 L952 186 L970 180 L984 194 L1000 176 L1014 184Z M1200 110 L1168 150 L1188 144 L1204 160 L1222 140 L1236 150Z M780 260 L760 286 L776 282 L790 292 L800 280Z" fill="#FFFBEF"/>
+    <path d="M0 480 L160 455 L320 480 L480 450 L640 478 L780 420 L920 460 L1060 390 L1210 450 L1330 410 L1440 440 V560 H0Z" fill="#004999"/>
+  </svg>
+
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-h">Your AI, kept at home.</h1>
+      <p class="lede">Pacachat is a free iPhone and iPad app for chatting with Ollama on your own computer. Your conversations travel over your Wi-Fi and nowhere else.</p>
+      <div class="hero-cta">
+        <a class="btn" href="https://apps.apple.com/us/app/pacachat-local-ai-chat/id6753087483">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6 1.3-.1 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.6-4.3zM13.9 5c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4z"/></svg>
+          Get it on the App Store</a>
+        <a class="btn ghost" href="#how">See how to set it up</a>
+      </div>
+      <p class="hero-fine">Needs a computer running Ollama on the same network.</p>
+    </div>
+
+    <div class="stage" data-stage role="img" aria-label="Animation: you type a question into Pacachat on your phone. The alpaca mascot carries it along the Wi-Fi to the computer in your house, the model thinks, and the alpaca carries the answer back to your phone.">
+      <div class="stage-in">
+        <svg class="st-hill" viewBox="0 0 380 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 22 C 60 20, 110 18, 150 14 C 190 9, 225 3, 262 4 C 300 5, 330 10, 380 13 V40 H0Z" fill="#F5B83D"/>
+          <path d="M0 30 C 80 26, 140 24, 190 22 C 240 20, 300 22, 380 24 V40 H0Z" fill="#DE9A1F"/>
+          <g fill="none" stroke="#B9770F" stroke-width=".35" stroke-linecap="round">
+            <path d="M172 12 l-1 -2.6 M173 12 l0 -3 M174 12 l1 -2.4"/><path d="M200 8 l-1 -2.4 M201 8 l0 -2.8 M202 8 l1 -2.2"/>
+            <path d="M246 5 l-1 -2.4 M247 5 l0 -2.8 M248 5 l1 -2.2"/><path d="M150 26 l-1 -2.4 M151 26 l0 -2.8 M152 26 l1 -2.2"/>
+          </g>
+        </svg>
+        <svg class="st-trail" viewBox="0 0 100 86" aria-hidden="true">
+          <path d="M44 73 C 49 66, 53 66, 57 67 S 66 68, 70 66"/>
+        </svg>
+        <div class="house" aria-hidden="true">
+          <svg viewBox="0 0 112 100">
+            <rect x="8" y="40" width="98" height="58" rx="3" fill="#F3DDB5" stroke="#000" stroke-width="2.6"/>
+            <path d="M14 60 h10 M30 52 h12 M70 48 h14 M18 82 h8 M90 90 h8" stroke="#D9BC8C" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M2 44 L56 6 L110 44 Z" fill="#E7A93C" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/>
+            <path d="M20 32 L26 40 M34 22 L40 34 M48 13 L52 30 M64 13 L60 30 M78 22 L72 34 M92 32 L86 40" stroke="#B9770F" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M15 98 V72 a11 11 0 0 1 22 0 V98" fill="#0062CC" stroke="#000" stroke-width="2.6"/>
+            <circle cx="32" cy="86" r="1.6" fill="#F5B83D"/>
+            <rect x="48" y="53" width="54" height="34" rx="2.5" fill="#0B1B33" stroke="#000" stroke-width="2.6"/>
+          </svg>
+          <div class="win" data-win><div class="wm"><i></i><span data-win-model>llama3.2</span></div><div class="wbars"><b></b><b></b><b></b><b></b></div></div>
+          <svg class="wifi" data-wifi viewBox="0 0 60 44"><path d="M8 18 a32 32 0 0 1 44 0"/><path d="M16 27 a20 20 0 0 1 28 0"/><path d="M24 36 a8 8 0 0 1 12 0"/></svg>
+        </div>
+
+        <div class="phone" aria-hidden="true">
+          <div class="ph-status"><span>9:41</span><span class="island"></span><span class="bat"></span></div>
+          <div class="ph-head">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <div class="ph-title"><b data-title>AI Chat</b><span data-model>llama3.2 ▾</span></div>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
+          </div>
+          <div class="ph-chat" data-chat></div>
+          <div class="ph-input"><div class="ph-field" data-field></div><div class="ph-send" data-send><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div></div>
+        </div>
+
+        <button class="paca hero-paca" data-paca data-hero-paca aria-label="Send another message"><span class="cargo" data-cargo><i></i><i></i><i></i></span></button>
+        <div class="say" data-say>Tap me to ask another</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="weave red" aria-hidden="true"></div>
+
+<!-- ===================== HOW ===================== -->
+<section class="how" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="how-head">
+      <h2 id="how-h">Set it up in three steps</h2>
+      <p class="lede">You need a Mac, Windows or Linux computer that stays on, and your phone on the same Wi-Fi. Setup takes about ten minutes, most of it spent downloading a model.</p>
+    </div>
+    <div class="steps" data-steps>
+      <ol>
+        <li class="step" data-step>
+          <span class="num" aria-hidden="true">1</span>
+          <h3>Run Ollama on your computer</h3>
+          <p>Install it from <a href="https://ollama.com">ollama.com</a>, then download a model to chat with.</p>
+          <div class="code term1"><div class="code-top">Terminal<button class="copy" data-copy="ollama pull llama3.2">Copy</button></div><pre><span data-cmd><span class="ps">$ </span><span class="k">ollama</span> pull llama3.2</span><span data-out></span></pre></div>
+        </li>
+        <li class="step" data-step>
+          <span class="num" aria-hidden="true">2</span>
+          <h3>Let your phone reach it</h3>
+          <p>Out of the box, Ollama only answers the computer it runs on. Start it like this so it listens on your Wi-Fi.</p>
+          <div class="code term2"><div class="code-top">Terminal<button class="copy" data-copy="OLLAMA_HOST=0.0.0.0 ollama serve">Copy</button></div><pre><span data-cmd><span class="ps">$ </span><span class="k">OLLAMA_HOST</span>=0.0.0.0 ollama serve</span><span data-out></span></pre></div>
+          <p class="small">On Windows, add OLLAMA_HOST as an environment variable and restart Ollama.</p>
+        </li>
+        <li class="step" data-step>
+          <span class="num" aria-hidden="true">3</span>
+          <h3>Open Pacachat</h3>
+          <p>Allow local network access when iOS asks. Pacachat finds your computer, you pick a model, and you can start chatting.</p>
+          <div class="hello on" data-hello>
+            <span class="paca" data-paca aria-hidden="true"></span>
+            <span class="connected" data-connected><i></i><span data-conn-text>Connected to 192.168.1.24</span></span>
+          </div>
+        </li>
+      </ol>
+      <button type="button" class="replay" data-replay hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg>Play again</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FEATURES ===================== -->
+<section class="feats" id="features" aria-labelledby="feats-h">
+  <div class="wrap">
+    <h2 id="feats-h">A proper chat app for the models you already run</h2>
+
+    <!-- threads -->
+    <div class="panel p-blue">
+      <span class="paca peek top-l f-fawn" data-paca aria-hidden="true"></span>
+      <div class="p-copy">
+        <h3>Keep every conversation</h3>
+        <p>Start as many chats as you like. Pacachat names each one after the first reply, so the sourdough chat is easy to find next week.</p>
+      </div>
+      <div class="mock" data-threads>
+        <div class="m-head"><b>Chat History</b><button type="button" data-newchat>New chat</button></div>
+        <div class="m-body threads" data-thread-list>
+          <div class="thread"><b>Sourdough names</b><small>9:41</small><span>How about Bread Pitt? Or Clint Yeastwood…</span></div>
+          <div class="thread"><b>Phone number regex</b><small>Yesterday</small><span>Three digits, a dash, then four digits…</span></div>
+          <div class="thread"><b>Fried rice rescue</b><small>Mon</small><span>Cold rice works best, and the scallion…</span></div>
+          <div class="thread"><b>Cusco weekend</b><small>Sep 28</small><span>Layers, sunscreen, a warm hat for the nights…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- markdown + code -->
+    <div class="panel p-night flip">
+      <span class="paca peek top-r f-charcoal" data-paca aria-hidden="true"></span>
+      <div class="p-copy">
+        <h3>Answers that look right</h3>
+        <p>Replies come through as proper Markdown: lists, bold, tables and code blocks with syntax highlighting. Long-press a reply to copy it, or tap Copy on just the code.</p>
+      </div>
+      <div class="mock">
+        <div class="m-head"><b>Phone number regex</b><span style="font:600 13px var(--code); color:var(--blue)">qwen2.5-coder</span></div>
+        <div class="m-body">
+          <div class="reply" data-reply tabindex="0" aria-label="Example reply. Press and hold to copy.">
+            <p>Here's a check you can drop into Python:</p>
+            <div class="cb">
+              <div class="cb-top">python<button type="button" data-cbcopy>Copy</button></div>
+<pre><span class="t-k">import</span> re
+
+<span class="t-c"># 555-0199 style numbers</span>
+PHONE = re.<span class="t-f">compile</span>(<span class="t-s">r"^\d{3}-\d{4}$"</span>)
+
+<span class="t-k">def</span> <span class="t-f">is_phone</span>(s):
+    <span class="t-k">return</span> PHONE.<span class="t-f">match</span>(s) <span class="t-k">is not</span> <span class="t-n">None</span></pre>
+            </div>
+            <ul><li><b>^</b> and <b>$</b> pin it to the whole string</li><li><b>\d{3}</b> means exactly three digits</li></ul>
+            <span class="copied" data-copied>Copied Text</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- discovery -->
+    <div class="panel p-gold">
+      <span class="paca peek side-r f-caramel" data-paca aria-hidden="true"></span>
+      <div class="p-copy">
+        <h3>It finds your computer for you</h3>
+        <p>Pacachat looks around your Wi-Fi for anything running Ollama and lists what it finds. If you'd rather type the address yourself, you can do that too.</p>
+      </div>
+      <div class="mock" data-scanner>
+        <div class="m-head"><b>Select Ollama Server</b><button type="button" data-rescan>Scan again</button></div>
+        <div class="m-body scan">
+          <div class="radar" data-radar><span class="me"></span><span class="dot" style="left:72%; top:30%"></span><span class="dot" style="left:26%; top:68%"></span></div>
+          <p class="scan-note" data-scan-note aria-live="polite">Looking for Ollama on your network…</p>
+          <div class="servers">
+            <div class="server">http://192.168.1.24:11434<em>Connect</em></div>
+            <div class="server">http://192.168.1.31:11434<em>Connect</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- parameters -->
+    <div class="panel p-pale flip">
+      <span class="paca peek side-l f-cocoa" data-paca aria-hidden="true"></span>
+      <div class="p-copy">
+        <h3>Tune how each model talks</h3>
+        <p>Switch models from the top of the chat. In settings, adjust temperature, top P, top K, repeat penalty and max tokens. Try the temperature slider here and watch the answer change.</p>
+      </div>
+      <div class="mock">
+        <div class="m-head"><b>Model Settings</b></div>
+        <div class="m-body params">
+          <div class="models" role="group" aria-label="Model">
+            <button type="button" class="chip" aria-pressed="true">llama3.2</button><button type="button" class="chip" aria-pressed="false">gemma3</button><button type="button" class="chip" aria-pressed="false">mistral</button><button type="button" class="chip" aria-pressed="false">qwen2.5-coder</button>
+          </div>
+          <div class="prm">
+            <label for="temp">Temperature <output data-temp-out>0.7</output></label>
+            <small>Controls creativity and randomness (0.1-2.0)</small>
+            <input id="temp" type="range" min="0.1" max="2" step="0.1" value="0.7" data-temp>
+          </div>
+          <div class="sample" aria-live="polite"><span class="q">Name my sourdough starter</span><span data-sample>How about Bread Pitt? Or Clint Yeastwood, if it's feeling rugged.</span></div>
+          <div class="toggle-row">Sound Effects<button type="button" class="switch" role="switch" aria-checked="false" aria-label="Sound Effects" data-sound></button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="weave blue" aria-hidden="true"></div>
+
+<!-- ===================== NIGHT / PRIVACY ===================== -->
+<section class="night" id="privacy" aria-labelledby="night-h" data-night>
+  <svg class="stars" data-stars aria-hidden="true"></svg>
+  <div class="twinkles" data-twinkles aria-hidden="true"></div>
+  <svg class="milky" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs><filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="26"/></filter><filter id="soft2"><feGaussianBlur stdDeviation="2.5"/></filter></defs>
+    <path d="M-60 860 C 300 760, 640 700, 900 600 S 1300 360, 1520 240" stroke="#6E98D6" stroke-width="170" fill="none" opacity=".3" filter="url(#soft)"/>
+    <g class="yacana" transform="translate(790 470) scale(1.9) rotate(-18)">
+      <path filter="url(#soft2)" fill="#001A38" opacity=".95" d="M30 52 C 30 44, 40 41, 52 41 L 79 41 L 80 22 C 80 16, 84 12, 88 12 L 89 4 L 93 11 L 96 4 L 97 12 C 102 13, 106 16, 106 20 C 106 23, 103 25, 98 25 L 92 26 L 92 46 C 92 56, 90 62, 86 64 L 86 92 L 81 92 L 80 66 L 76 66 L 75 92 L 70 92 L 69 66 L 46 66 L 45 92 L 40 92 L 39 65 L 37 65 L 36 92 L 31 92 L 31 60 C 28 58, 27 54, 30 52 Z"/>
+      <circle cx="99" cy="17" r="2.2" fill="#fff"/><circle cx="104" cy="19" r="1.6" fill="#fff"/>
+    </g>
+  </svg>
+  <div class="wrap night-grid">
+    <div>
+      <h2 id="night-h">The only cloud involved is this one.</h2>
+      <p class="lede">When you send a message, it goes from your phone to your computer over your own network. It isn't sent to us or anyone else. Your chats are saved on your phone, and that's the only place they're saved.</p>
+    </div>
+    <ul class="facts">
+      <li><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" fill="#F5B83D"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" stroke="#0E2240" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>No account to create, no sign-in.</li>
+      <li><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" fill="#F5B83D"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" stroke="#0E2240" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>No analytics, tracking or ads.</li>
+      <li><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" fill="#F5B83D"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" stroke="#0E2240" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Nothing stored on our servers. We don't run any.</li>
+      <li><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" fill="#F5B83D"/><path d="M7.5 13.5l3.6 3.6 7.4-7.6" stroke="#0E2240" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Delete a chat and it's gone. Delete the app and so is everything else.</li>
+      <li><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" fill="#FFFBEF"/><path d="M8 13h10M14 9l4 4-4 4" stroke="#0E2240" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The details are in the <a href="privacy.html">privacy policy</a>.</span></li>
+    </ul>
+  </div>
+  <div class="night-land">
+    <p class="y-note">That dark shape in the Milky Way is Yacana, the llama the Inca saw in the night sky. Its eyes are the stars Alpha and Beta Centauri.</p>
+    <svg class="ridge" viewBox="0 0 1440 340" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 150 L140 70 L260 130 L420 30 L560 140 L700 80 L860 160 L1010 50 L1160 140 L1300 90 L1440 140 V340 H0Z" fill="#001E3F"/>
+      <path d="M0 250 C 240 210, 520 200, 760 214 S 1200 236, 1440 224 V340 H0Z" fill="#00152E"/>
+    </svg>
+    <div class="sleeper paca asleep" data-paca aria-hidden="true"><div class="zz"><span>z</span><span>z</span><span>z</span></div></div>
+    <svg class="n-house" viewBox="0 0 112 100" aria-hidden="true">
+      <rect x="8" y="40" width="98" height="58" rx="3" fill="#0B2A52" stroke="#000" stroke-width="2.6"/>
+      <path d="M2 44 L56 6 L110 44 Z" fill="#123B6B" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M15 98 V72 a11 11 0 0 1 22 0 V98" fill="#082040" stroke="#000" stroke-width="2.6"/>
+      <rect x="48" y="53" width="54" height="34" rx="2.5" fill="#FFD27A" stroke="#000" stroke-width="2.6"/>
+      <rect x="58" y="60" width="34" height="20" rx="2" fill="#5EA2FF"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="faq" id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq-grid">
+    <div class="faq-aside">
+      <h2 id="faq-h">Questions</h2>
+      <p>Stuck on setup, found a bug or have an idea? Email <a href="mailto:pacachat-support@whiskeydanger.com">pacachat-support@whiskeydanger.com</a>. You can also send feedback from Settings in the app.</p>
+    </div>
+    <div>
+      <details class="qa"><summary>What do I need before I start?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>An iPhone or iPad, plus a computer running <a href="https://ollama.com">Ollama</a> on the same network. Any Mac, Windows or Linux machine works. Bigger models need more memory, but small ones like <code>llama3.2</code> run on most laptops.</p></div></details>
+      <details class="qa"><summary>Does it cost anything?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>No. Pacachat is free, and so is Ollama. The models run on hardware you already own, so there's no per-message fee either.</p></div></details>
+      <details class="qa"><summary>Pacachat can't find my computer. What now?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>Check three things. Your phone and computer are on the same Wi-Fi. Ollama was started with <code>OLLAMA_HOST=0.0.0.0</code>. And Pacachat has local network access, under Settings &gt; Privacy &amp; Security &gt; Local Network on your iPhone.</p><p>If it still doesn't show up, type the address in yourself, such as <code>http://192.168.1.24:11434</code>.</p></div></details>
+      <details class="qa"><summary>Does it work when I'm away from home?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>Pacachat is built for your home network. If you already reach your computer remotely through a VPN, you can enter that address instead.</p></div></details>
+      <details class="qa"><summary>Which models can I use?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>Any model you've downloaded in Ollama, such as Llama, Gemma, Mistral, Qwen or DeepSeek. Pacachat lists them for you, and you can switch from the top of any chat.</p></div></details>
+      <details class="qa"><summary>Where are my chats stored?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>On your phone, inside the app. Your computer answers each message, but Pacachat keeps the history. Delete a chat in the app and it's gone.</p></div></details>
+      <details class="qa"><summary>Is there an Android version?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>Not yet. Pacachat is on iPhone and iPad for now.</p></div></details>
+      <details class="qa"><summary>Why an alpaca?<span class="x" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></span></summary>
+        <div class="a"><p>Ollama's mascot is a llama. Alpacas are their smaller, fluffier cousins, and this one carries your messages.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CLOSING ===================== -->
+<section class="join" aria-labelledby="join-h" data-join>
+  <svg class="sky-cloud c1" viewBox="0 0 160 80" fill="#C9D8EC" aria-hidden="true"><use href="#cloud-grey"/></svg>
+  <svg class="sky-cloud c3" viewBox="0 0 160 80" fill="#C9D8EC" aria-hidden="true"><use href="#cloud-grey"/></svg>
+  <div class="wrap">
+    <h2 id="join-h">Say hello to your own AI.</h2>
+    <p class="lede">Free on the App Store for iPhone and iPad.</p>
+    <a class="btn" href="https://apps.apple.com/us/app/pacachat-local-ai-chat/id6753087483">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6 1.3-.1 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.6-4.3zM13.9 5c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4z"/></svg>
+      Get it on the App Store</a>
+  </div>
+  <div class="parade">
+    <div class="herd" data-herd>
+      <button class="hp paca f-silver" data-paca style="--dl:.3s; --sink:22%" aria-label="Alpaca"><span class="say2"></span></button>
+      <button class="hp paca f-caramel" data-paca style="--dl:.12s; --sink:14%" aria-label="Alpaca"><span class="say2"></span></button>
+      <button class="hp paca f-fawn" data-paca style="--dl:.42s; --sink:26%" aria-label="Alpaca"><span class="say2"></span></button>
+      <button class="hp paca" data-paca style="--dl:0s; --sink:8%; width:clamp(76px,10vw,136px)" aria-label="Alpaca"><span class="say2"></span></button>
+      <button class="hp paca f-cocoa" data-paca style="--dl:.24s; --sink:18%" aria-label="Alpaca"><span class="say2"></span></button>
+      <button class="hp paca f-white" data-paca style="--dl:.5s; --sink:24%" aria-label="Alpaca"><span class="say2"></span></button>
+      <button class="hp paca f-charcoal" data-paca style="--dl:.36s; --sink:16%" aria-label="Alpaca"><span class="say2"></span></button>
+    </div>
+    <svg class="ground" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 50 C 200 20, 420 18, 720 34 S 1240 22, 1440 44 V160 H0Z" fill="#F5B83D"/>
+      <path d="M0 96 C 300 76, 600 80, 900 90 S 1300 80, 1440 88 V160 H0Z" fill="#DE9A1F"/>
+    </svg>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Pacachat is made by <a href="/">Whiskey Danger</a>.</span>
+    <nav aria-label="Footer">
+      <a href="privacy.html">Privacy policy</a>
+      <a href="mailto:pacachat-support@whiskeydanger.com">Support</a>
+      <a href="https://apps.apple.com/us/app/pacachat-local-ai-chat/id6753087483">App Store</a>
+    </nav>
+  </div>
+</footer>
+
+<audio data-pop src="assets/pop.mp3" preload="none"></audio>
+
+<script>
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const D = ms => (RM ? 1 : ms);
+  const wait = ms => new Promise(r => setTimeout(r, RM ? 0 : ms));
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const params = new URLSearchParams(location.search);
+
+  /* ---------- the paca, stamped into every [data-paca] ---------- */
+  const PACA = `<svg class="paca-svg" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><g class="breathe">
+    <use href="#pc-earL" style="fill:var(--fleece)" stroke="#000" stroke-width="12" stroke-linejoin="round"/>
+    <use href="#pc-earR" style="fill:var(--fleece)" stroke="#000" stroke-width="12" stroke-linejoin="round"/>
+    <use href="#pc-shape" fill="#000" stroke="#000" stroke-width="14"/>
+    <use href="#pc-shape" style="fill:var(--shade)"/>
+    <g clip-path="url(#pc-clip)"><use href="#pc-shape" style="fill:var(--fleece)" transform="translate(-7 -8)"/></g>
+    <g style="color:var(--face)">
+      <g class="pc-eyes"><ellipse cx="80" cy="104" rx="7" ry="10" fill="currentColor"/><ellipse cx="120" cy="104" rx="7" ry="10" fill="currentColor"/></g>
+      <g class="pc-closed" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"><path d="M71 104 Q80 111 89 104"/><path d="M111 104 Q120 111 129 104"/></g>
+      <path class="pc-mouth" d="M88 126 Q100 138 112 126" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+    </g></g></svg>`;
+  $$('[data-paca]').forEach(el => el.insertAdjacentHTML('afterbegin', PACA));
+  // stagger blinks and breaths so the herd never moves in lockstep
+  $$('.paca').forEach((p, i) => {
+    $$('.pc-eyes ellipse', p).forEach(e => e.style.animationDelay = `${-(i * 1.37) % 5}s`);
+    const b = $('.breathe', p); if (b) b.style.animationDelay = `${-(i * .71) % 3}s`;
+  });
+
+  /* pause ambient loops when their section is off screen */
+  const pauseOff = el => new IntersectionObserver(([e]) => el.classList.toggle('paused', !e.isIntersecting)).observe(el);
+  $$('section').forEach(pauseOff);
+
+  /* ---------- nav ---------- */
+  const nav = $('[data-nav]'), heroEl = $('[data-hero]');
+  let ticking = false;
+  addEventListener('scroll', () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => { ticking = false; const past = scrollY > heroEl.offsetHeight - 80; nav.classList.toggle('scrolled', past); nav.classList.toggle('in-hero', !past && scrollY > 20); });
+  }, { passive: true });
+
+  /* ---------- hero: one message, there and back ---------- */
+  const SCRIPTS = [
+    { q: 'Name my sourdough starter', title: 'Sourdough names', model: 'llama3.2', a: "How about Bread Pitt? Or Clint Yeastwood, if it's feeling rugged." },
+    { q: 'Rice, eggs and one sad scallion. Dinner?', title: 'Fried rice rescue', model: 'gemma3', a: 'Fried rice. Cold rice works best, and the scallion goes on top so it gets a hero’s ending.' },
+    { q: 'What does ^\\d{3}-\\d{4}$ match?', title: 'Phone number regex', model: 'qwen2.5-coder', a: 'Three digits, a dash, then four digits, and nothing else. Like 555-0199.' },
+    { q: 'Packing list for a weekend in Cusco?', title: 'Cusco weekend', model: 'mistral', a: 'Layers, sunscreen, a warm hat for the nights, and an easy first day for the altitude.' },
+  ];
+  const THINK = ['Ruminating', 'Mulling', 'Pondering', 'Musing', 'Cogitating', 'Deliberating'];
+  const stage = $('[data-stage]'), paca = $('[data-hero-paca]'), cargo = $('[data-cargo]'), say = $('[data-say]');
+  const chat = $('[data-chat]'), field = $('[data-field]'), send = $('[data-send]'), title = $('[data-title]'), modelPill = $('[data-model]');
+  const win = $('[data-win]'), winModel = $('[data-win-model]'), wifi = $('[data-wifi]'), mouth = $('.pc-mouth', paca);
+  const HOME = { x: 36, y: 57 }, MID = { x: 46, y: 51 }, DOOR = { x: 56, y: 50 };
+  let pos = { ...HOME }, hopAnim = null, busy = false, runs = 0, idx = 0, heroVisible = true, autoTimer = null;
+  const T = (x, y, r = 0, sx = 1, sy = 1) => `translate(${x}cqw,${y}cqw) rotate(${r}deg) scale(${sx},${sy})`;
+
+  async function hopTo(to, dur = 560) {
+    const p = pos, dir = to.x > p.x ? 1 : -1, apex = Math.min(p.y, to.y) - 7;
+    const a = paca.animate([
+      { transform: T(p.x, p.y), offset: 0 },
+      { transform: T(p.x, p.y + .5, 0, 1.08, .9), offset: .14 },
+      { transform: T(p.x + (to.x - p.x) * .25, p.y - 4.5, -7 * dir, .95, 1.06), offset: .34 },
+      { transform: T((p.x + to.x) / 2, apex, 3 * dir), offset: .55 },
+      { transform: T(to.x, to.y + .4, 0, 1.09, .89), offset: .88 },
+      { transform: T(to.x, to.y), offset: 1 },
+    ], { duration: D(dur), easing: 'ease-in-out', fill: 'forwards' });
+    if (hopAnim) hopAnim.cancel();
+    hopAnim = a; pos = { ...to };
+    await a.finished;
+  }
+
+  function mini(kind) {
+    const m = document.createElement('div');
+    m.className = `mini ${kind}`; m.innerHTML = '<i></i><i></i><i></i>';
+    return m;
+  }
+  async function fly(fromEl, toEl, kind) {
+    const sr = stage.getBoundingClientRect(), a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+    const w = cargo.offsetWidth || sr.width * .09, h = cargo.offsetHeight || sr.width * .054;
+    const m = mini(kind);
+    const ax = a.left + a.width / 2 - sr.left - w / 2, ay = a.top + a.height / 2 - sr.top - h / 2;
+    const bx = b.left + b.width / 2 - sr.left - w / 2, by = b.top + b.height / 2 - sr.top - h / 2;
+    Object.assign(m.style, { left: `${ax}px`, top: `${ay}px`, width: `${w}px`, height: `${h}px` });
+    $('.stage-in').append(m);
+    const dx = bx - ax, dy = by - ay;
+    await m.animate([
+      { transform: 'translate(0,0) rotate(0) scale(.7)' },
+      { transform: `translate(${dx * .5}px,${dy * .5 - sr.width * .06}px) rotate(${dx > 0 ? 10 : -10}deg) scale(1.1)`, offset: .5 },
+      { transform: `translate(${dx}px,${dy}px) rotate(-8deg) scale(1)` },
+    ], { duration: D(520), easing: 'ease-in-out', fill: 'forwards' }).finished;
+    m.remove();
+  }
+  async function typeInto(el, text) {
+    el.textContent = '';
+    for (const ch of text) { el.textContent += ch; await wait(38 + Math.random() * 40); }
+  }
+  function bubble(kind, text) {
+    const b = document.createElement('div');
+    b.className = `bub ${kind} pop`; b.textContent = text; chat.append(b); return b;
+  }
+
+  async function run() {
+    if (busy) return; busy = true; clearTimeout(autoTimer);
+    say.classList.remove('on');
+    const s = SCRIPTS[idx % SCRIPTS.length]; idx++;
+    if (pos.x !== HOME.x) { await hopTo(MID, 420); await hopTo(HOME, 420); }
+    chat.innerHTML = ''; title.textContent = 'AI Chat';
+    modelPill.textContent = `${s.model} ▾`; winModel.textContent = s.model;
+    await wait(300);
+    await typeInto(field, s.q);
+    await wait(220);
+    send.classList.add('press'); await wait(140); send.classList.remove('press');
+    field.textContent = '';
+    const me = bubble('me', s.q);
+    await wait(380);
+    await fly(me, cargo, 'me');
+    cargo.className = 'cargo me on';
+    const thinking = bubble('ai', '');
+    const word = THINK[(idx + runs) % THINK.length];
+    thinking.innerHTML = `<span class="shimmer">${word}...</span>`;
+    await wait(150);
+    await hopTo(MID); await hopTo(DOOR);
+    await fly(cargo, win, 'me'); cargo.className = 'cargo';
+    win.classList.add('busy'); wifi.classList.add('on');
+    mouth.classList.add('chew');
+    await wait(1700);
+    mouth.classList.remove('chew'); win.classList.remove('busy'); wifi.classList.remove('on');
+    await fly(win, cargo, 'ai'); cargo.className = 'cargo ai on';
+    await hopTo(MID); await hopTo(HOME);
+    await fly(cargo, thinking, 'ai'); cargo.className = 'cargo';
+    thinking.textContent = '';
+    for (const w of s.a.split(' ')) { thinking.textContent += (thinking.textContent ? ' ' : '') + w; await wait(55); }
+    title.style.opacity = 0; await wait(250); title.textContent = s.title; title.style.opacity = 1;
+    runs++;
+    await wait(500);
+    say.classList.add('on');
+    busy = false;
+    if (!RM && runs < 6) autoTimer = setTimeout(() => { if (heroVisible && !document.hidden) run(); }, 7000);
+  }
+  paca.addEventListener('click', run);
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; }, { threshold: .25 }).observe(stage);
+  if (RM) {
+    // show the finished exchange straight away
+    const s = SCRIPTS[0]; bubble('me', s.q); bubble('ai', s.a); title.textContent = s.title; say.classList.add('on'); idx = 1;
+  } else setTimeout(run, 900);
+
+  /* ---------- how: the setup plays itself out once you arrive ---------- */
+  const stepsEl = $('[data-steps]'), stepLis = $$('[data-step]', stepsEl), replay = $('[data-replay]');
+  const hello = $('[data-hello]'), conn = $('[data-connected]'), connText = $('[data-conn-text]');
+  const cmds = stepLis.map(li => $('[data-cmd]', li)).filter(Boolean), outs = stepLis.map(li => $('[data-out]', li)).filter(Boolean);
+  const cmdHTML = cmds.map(c => c.innerHTML);
+  let playing = false;
+  const line = (out, text, cls = '') => { const d = document.createElement('span'); d.className = `ln ${cls}`; d.textContent = text; out.append(d); return d; };
+  const bar = p => { const n = Math.round(p / 10); return `pulling dde5aa3fc5ff ${String(p).padStart(3)}% ▕${'█'.repeat(n)}${'\u00a0'.repeat(10 - n)}▏`; };
+  async function typeCmd(i) {
+    const c = cmds[i], plain = c.textContent.replace(/^\$ /, '');
+    c.innerHTML = '<span class="ps">$ </span><span class="typed"></span><span class="caret"></span>';
+    const t = $('.typed', c);
+    for (const ch of plain) { t.textContent += ch; await wait(32 + Math.random() * 38); }
+    await wait(260);
+    c.innerHTML = cmdHTML[i];
+  }
+  function setupReset() {
+    stepLis.forEach(li => li.classList.remove('active', 'reached'));
+    outs.forEach(o => (o.innerHTML = ''));
+    cmds.forEach(c => (c.innerHTML = '<span class="ps">$ </span><span class="caret"></span>'));
+    hello.classList.remove('on'); conn.classList.add('searching'); connText.textContent = 'Looking for Ollama…';
+  }
+  function setupFinal() {
+    stepLis.forEach(li => li.classList.add('reached'));
+    cmds.forEach((c, i) => (c.innerHTML = cmdHTML[i]));
+    outs[0].innerHTML = ''; ['pulling manifest', bar(100), 'verifying sha256 digest', 'writing manifest'].forEach((t, i) => line(outs[0], t, i === 1 ? 'gold' : '')); line(outs[0], 'success', 'ok');
+    outs[1].innerHTML = ''; line(outs[1], 'Listening on [::]:11434', 'ok');
+    conn.classList.remove('searching'); connText.textContent = 'Connected to 192.168.1.24'; hello.classList.add('on');
+  }
+  const go = i => { stepLis.forEach((li, j) => li.classList.toggle('active', j === i)); };
+  async function playSetup() {
+    if (playing) return; playing = true; replay.hidden = true;
+    stepsEl.classList.add('armed'); setupReset();
+    await wait(300);
+    go(0); await typeCmd(0);
+    line(outs[0], 'pulling manifest'); await wait(450);
+    const b = line(outs[0], bar(0), 'gold');
+    for (let p = 0; p <= 100; p += 4) { b.textContent = bar(p); await wait(55); }
+    line(outs[0], 'verifying sha256 digest'); await wait(380);
+    line(outs[0], 'writing manifest'); await wait(300);
+    line(outs[0], 'success', 'ok'); stepLis[0].classList.add('reached'); await wait(650);
+    go(1); await typeCmd(1); await wait(500);
+    line(outs[1], 'Listening on [::]:11434', 'ok'); stepLis[1].classList.add('reached'); await wait(650);
+    go(2); await wait(1400);
+    conn.classList.remove('searching'); connText.textContent = 'Connected to 192.168.1.24';
+    hello.classList.add('on'); stepLis[2].classList.add('reached');
+    await wait(900);
+    go(-1); replay.hidden = false; playing = false;
+  }
+  replay.addEventListener('click', playSetup);
+  if (RM) { setupFinal(); replay.remove(); }
+  else {
+    stepsEl.classList.add('armed'); setupReset();
+    // start when the first step is properly on screen (the stacked mobile list is taller than the viewport)
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting) { o.disconnect(); playSetup(); } }, { threshold: .6 }).observe(stepLis[0]);
+  }
+
+  /* copy buttons */
+  $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); } catch {}
+    b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1600);
+  }));
+
+  /* ---------- features ---------- */
+  // new chat: a fresh thread slides in, then gets its name
+  const list = $('[data-thread-list]');
+  const NEW = [['Haiku about Mondays', 'Alarm clock again / the coffee knows what I need…'], ['Birthday gift ideas', 'A pottery class for two, or a really good…'], ['Fix my shell script', 'The loop exits early because set -e…'], ['Alpaca or llama?', 'Alpacas are smaller, with shorter ears…']];
+  let ni = 0;
+  $('[data-newchat]').addEventListener('click', async () => {
+    const rows = $$('.thread', list);
+    const first = new Map(rows.map(r => [r, r.getBoundingClientRect()]));
+    const row = document.createElement('div');
+    row.className = 'thread fresh';
+    row.innerHTML = `<b><span class="shimmer">Naming…</span></b><small>now</small><span>&nbsp;</span>`;
+    list.prepend(row);
+    rows.forEach((r, i) => { if (i >= 3) r.remove(); });
+    rows.slice(0, 3).forEach(r => { const a = first.get(r), b = r.getBoundingClientRect(); r.animate([{ transform: `translateY(${a.top - b.top}px)` }, { transform: 'none' }], { duration: D(420), easing: 'cubic-bezier(.2,.8,.2,1)' }); });
+    row.animate([{ opacity: 0, transform: 'scale(.92)' }, { opacity: 1, transform: 'none' }], { duration: D(380), easing: 'cubic-bezier(.3,1.5,.5,1)' });
+    const [t, p] = NEW[ni++ % NEW.length];
+    await wait(1100);
+    row.querySelector('b').textContent = t; row.querySelector('span').textContent = p;
+    await wait(1200); row.classList.remove('fresh');
+  });
+
+  // long-press a reply to copy, like the app
+  const reply = $('[data-reply]'), copied = $('[data-copied]');
+  const flashCopied = () => { reply.classList.remove('ripple'); void reply.offsetWidth; reply.classList.add('ripple'); copied.classList.add('on'); setTimeout(() => copied.classList.remove('on'), 1400); };
+  let pressT;
+  reply.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; pressT = setTimeout(flashCopied, 450); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => reply.addEventListener(ev, () => clearTimeout(pressT)));
+  reply.addEventListener('contextmenu', e => e.preventDefault());
+  reply.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flashCopied(); } });
+  $('[data-cbcopy]').addEventListener('click', e => { const b = e.currentTarget; b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1500); });
+
+  // network scan
+  const radar = $('[data-radar]'), note = $('[data-scan-note]'), servers = $$('.server'), dots = $$('.dot', radar);
+  let scanning = false;
+  async function scan() {
+    if (scanning) return; scanning = true;
+    servers.forEach(s => s.classList.remove('on')); dots.forEach(d => d.classList.remove('on'));
+    note.textContent = 'Looking for Ollama on your network…';
+    radar.classList.add('go');
+    await wait(1100); dots[0].classList.add('on'); servers[0].classList.add('on');
+    await wait(900); dots[1].classList.add('on'); servers[1].classList.add('on');
+    await wait(700); radar.classList.remove('go');
+    note.textContent = 'Found 2 servers';
+    scanning = false;
+  }
+  $('[data-rescan]').addEventListener('click', scan);
+  new IntersectionObserver(([e], o) => { if (e.isIntersecting) { scan(); o.disconnect(); } }, { threshold: .5 }).observe($('[data-scanner]'));
+
+  // models + temperature
+  const chips = $$('.chip');
+  chips.forEach(c => c.addEventListener('click', () => chips.forEach(x => x.setAttribute('aria-pressed', String(x === c)))));
+  const temp = $('[data-temp]'), tout = $('[data-temp-out]'), sample = $('[data-sample]');
+  const SAMPLES = [
+    [0.4, 'Starter.'],
+    [0.9, "How about Bread Pitt? Or Clint Yeastwood, if it's feeling rugged."],
+    [1.4, 'Sir Loafs-a-Lot, Duke of Crumbshire, Keeper of the Bubbling Jar.'],
+    [2.01, 'YEASTOPHELES!! devourer of flour, burper at midnight, he who rises twice'],
+  ];
+  temp.addEventListener('input', () => {
+    const v = +temp.value; tout.textContent = v.toFixed(1);
+    sample.textContent = SAMPLES.find(([max]) => v <= max)[1];
+  });
+
+  // sound effects: the app's real message sound
+  const pop = $('[data-pop]'), sw = $('[data-sound]');
+  sw.addEventListener('click', () => {
+    const on = sw.getAttribute('aria-checked') !== 'true';
+    sw.setAttribute('aria-checked', String(on));
+    if (on) { pop.currentTime = 0; pop.play().catch(() => {}); }
+  });
+
+  /* ---------- night ---------- */
+  const night = $('[data-night]'), stars = $('[data-stars]');
+  (function drawStars() {
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    stars.setAttribute('viewBox', '0 0 1440 900'); stars.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    let s = '';
+    for (let i = 0; i < 140; i++) {
+      const x = rnd() * 1440, y = rnd() * 640, r = rnd() < .9 ? .7 + rnd() * .9 : 1.6 + rnd();
+      s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#fff" opacity="${(.35 + rnd() * .6).toFixed(2)}"/>`;
+    }
+    stars.innerHTML = s;
+    // twinklers are plain divs so their opacity runs on the compositor (SVG children force layout every frame)
+    let t = '';
+    for (let i = 0; i < 16; i++) t += `<i style="left:${(rnd() * 98).toFixed(1)}%; top:${(rnd() * 96).toFixed(1)}%; animation-delay:${(-rnd() * 3.5).toFixed(2)}s"></i>`;
+    $('[data-twinkles]').innerHTML = t;
+  })();
+  // linger under the stars and Yacana appears
+  let watched = 0; const NEED = +params.get('yacana') || 18; let nightSeen = false;
+  new IntersectionObserver(([e]) => { nightSeen = e.intersectionRatio >= .45; }, { threshold: [0, .45, .7] }).observe(night);
+  const yt = setInterval(() => {
+    if (nightSeen && !document.hidden) watched++;
+    if (watched >= NEED) { night.classList.add('seen'); $('.sleeper').classList.remove('asleep'); clearInterval(yt); }
+  }, 1000);
+
+  /* ---------- closing: the herd stands up ---------- */
+  const join = $('[data-join]');
+  new IntersectionObserver(([e], o) => { if (e.isIntersecting) { join.classList.add('up'); o.disconnect(); } }, { threshold: .35 }).observe(join);
+  $$('.hp').forEach(hp => {
+    hp.addEventListener('click', () => {
+      const s = $('.say2', hp);
+      s.textContent = THINK[Math.floor(Math.random() * THINK.length)] + '...';
+      hp.classList.add('talk');
+      hp.animate([
+        { transform: `translateY(${getComputedStyle(hp).getPropertyValue('--sink')}) scale(1,1)` },
+        { transform: `translateY(calc(${getComputedStyle(hp).getPropertyValue('--sink')} + 4%)) scale(1.08,.9)`, offset: .15 },
+        { transform: `translateY(calc(${getComputedStyle(hp).getPropertyValue('--sink')} - 34%)) scale(.96,1.06)`, offset: .5 },
+        { transform: `translateY(calc(${getComputedStyle(hp).getPropertyValue('--sink')} + 3%)) scale(1.08,.9)`, offset: .85 },
+        { transform: `translateY(${getComputedStyle(hp).getPropertyValue('--sink')}) scale(1,1)` },
+      ], { duration: D(620), easing: 'ease-in-out' });
+      clearTimeout(hp._t); hp._t = setTimeout(() => hp.classList.remove('talk'), 1600);
+    });
+  });
+})();
+</script>
+</body>
+</html>
