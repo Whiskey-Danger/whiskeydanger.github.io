@@ -16,6 +16,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        /* Hold the hero's entrance until the web fonts are in, so the text doesn't swap mid-animation. */
+        (function (root) {
+            root.classList.add('anim');
+            var go = function () {
+                if (root.classList.contains('go')) return;
+                root.classList.add('go');
+                /* Safety net: whatever happens to the animations, the hero ends up visible. */
+                setTimeout(function () { root.classList.add('settled'); }, 2600);
+            };
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(go);
+            setTimeout(go, 1200);
+        })(document.documentElement);
+    </script>
     <style>
         :root {
             --cream: #F7F2E6;
@@ -404,10 +418,66 @@
             }
         }
 
+        /* ---------- Page load: one short sequence in the hero ---------- */
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+        }
+
+        @keyframes mascot-in {
+            0%   { opacity: 0; transform: translateY(-22px) rotate(-6deg); }
+            60%  { opacity: 1; transform: translateY(3px) rotate(1.5deg); }
+            100% { transform: none; }
+        }
+
+        @keyframes mascot-nod {
+            0%, 100% { transform: none; }
+            30%      { transform: rotate(-4deg); }
+            65%      { transform: rotate(2.5deg); }
+        }
+
+        .anim:not(.go) .hero-mark img,
+        .anim:not(.go) .hero-copy > * {
+            opacity: 0;
+        }
+
+        .hero-mark img {
+            transform-origin: 50% 88%;
+        }
+
+        .go .hero-mark img {
+            animation:
+                mascot-in 0.8s cubic-bezier(0.3, 0.7, 0.3, 1) 0.1s both,
+                mascot-nod 0.9s ease-in-out 1.25s;
+        }
+
+        .go .hero-copy > * {
+            animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        }
+
+        .settled .hero-mark img,
+        .settled .hero-copy > * {
+            animation: none;
+        }
+
+        .hero-copy > :nth-child(1) { animation-delay: 0.15s; }
+        .hero-copy > :nth-child(2) { animation-delay: 0.27s; }
+        .hero-copy > :nth-child(3) { animation-delay: 0.37s; }
+        .hero-copy > :nth-child(4) { animation-delay: 0.44s; }
+        .hero-copy > :nth-child(5) { animation-delay: 0.53s; }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation: none !important;
                 transition: none !important;
+            }
+
+            .anim:not(.go) .hero-mark img,
+            .anim:not(.go) .hero-copy > * {
+                opacity: 1;
             }
         }
     </style>
