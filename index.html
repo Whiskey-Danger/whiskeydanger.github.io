@@ -246,7 +246,7 @@
         .stage-help {
             margin-top: 16px;
             padding-left: 18px;
-            border-left: 3px solid var(--amber);
+            background: linear-gradient(var(--amber), var(--amber)) left top / 3px 100% no-repeat;
         }
 
         .stage-help b {
@@ -270,8 +270,34 @@
         }
 
         .arc .cta {
+            position: relative;
+            min-width: 260px;
+            padding: 18px 56px 20px;
+            font-size: 1.45rem;
+            text-align: center;
             border-color: var(--barrel-deep);
             box-shadow: 0 6px 0 var(--barrel-deep);
+        }
+
+        .arc .cta::after {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .arc-close.in .cta::after {
+            animation: halo 2.8s ease-out 0.6s infinite;
+        }
+
+        .arc .cta:hover::after {
+            animation-play-state: paused;
+        }
+
+        @keyframes halo {
+            0%       { box-shadow: 0 0 0 0 rgba(242, 179, 71, 0.55); }
+            70%, 100% { box-shadow: 0 0 0 18px rgba(242, 179, 71, 0); }
         }
 
         .arc .cta:hover {
@@ -463,6 +489,28 @@
             animation: none;
         }
 
+        /* ---------- Scroll: each block rises in once ---------- */
+
+        .anim [data-reveal] {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+        }
+
+        .anim [data-reveal].in {
+            opacity: 1;
+            transform: none;
+        }
+
+        .anim .stage .stage-help {
+            background-size: 3px 0;
+            transition: background-size 0.7s cubic-bezier(0.3, 0.7, 0.3, 1) 0.35s;
+        }
+
+        .anim .stage.in .stage-help {
+            background-size: 3px 100%;
+        }
+
         .hero-copy > :nth-child(1) { animation-delay: 0.15s; }
         .hero-copy > :nth-child(2) { animation-delay: 0.27s; }
         .hero-copy > :nth-child(3) { animation-delay: 0.37s; }
@@ -476,8 +524,14 @@
             }
 
             .anim:not(.go) .hero-mark img,
-            .anim:not(.go) .hero-copy > * {
+            .anim:not(.go) .hero-copy > *,
+            .anim [data-reveal] {
                 opacity: 1;
+                transform: none;
+            }
+
+            .anim .stage .stage-help {
+                background-size: 3px 100%;
             }
         }
     </style>
@@ -506,34 +560,34 @@
 
         <section class="arc" aria-labelledby="arc-h">
             <div class="arc-inner">
-                <div class="arc-head">
+                <div class="arc-head" data-reveal>
                     <h2 id="arc-h">Where I can help</h2>
                     <p>I've worked through each of these stages myself, and AI changes what matters at every one of them.</p>
                 </div>
 
                 <ul class="stages">
-                    <li class="stage">
+                    <li class="stage" data-reveal>
                         <h3><span class="stage-mark">Start</span> Going from 0 to 1</h3>
                         <div class="stage-body">
                             <p class="stage-situation">You have an idea and maybe a few customers waiting, but no product yet. Every early decision feels like it'll stick around forever, and most of them will.</p>
                             <p class="stage-help"><b>How I help:</b> deciding where AI belongs in the product from day one, choosing an architecture you won't regret, and hiring your first engineers.</p>
                         </div>
                     </li>
-                    <li class="stage">
+                    <li class="stage" data-reveal>
                         <h3><span class="stage-mark">Scale</span> Going from 1 to 2</h3>
                         <div class="stage-body">
                             <p class="stage-situation">Something's working. Now the team is growing faster than the way you work, your data is scattered across a dozen tools, and every competitor says they have AI.</p>
                             <p class="stage-help"><b>How I help:</b> stepping in as a fractional CTO, building agents and ML systems on your data with evals that keep them honest, and taking the busywork off your team.</p>
                         </div>
                     </li>
-                    <li class="stage">
+                    <li class="stage" data-reveal>
                         <h3><span class="stage-mark">Rewire</span> Changing how an established company works</h3>
                         <div class="stage-body">
                             <p class="stage-situation">You have a solid business and a team that's done things the same way for years. You can tell AI will change how all of it works, but not where to start.</p>
                             <p class="stage-help"><b>How I help:</b> picking the first places where it clearly pays off, then changing how the company builds and runs so the change sticks, including as part of a PE value creation plan.</p>
                         </div>
                     </li>
-                    <li class="stage">
+                    <li class="stage" data-reveal>
                         <h3><span class="stage-mark">Exit</span> Getting through diligence</h3>
                         <div class="stage-body">
                             <p class="stage-situation">A buyer or investor is about to look under the hood and ask hard questions about your technology and data. You'd like to know what they'll find before they do.</p>
@@ -542,7 +596,7 @@
                     </li>
                 </ul>
 
-                <div class="arc-close">
+                <div class="arc-close" data-reveal>
                     <p>I work as an advisor, as a fractional CTO, or on a focused project like an AI roadmap or diligence prep. Tell me where you are and we'll figure out what fits.</p>
                     <a class="cta" href="mailto:howdy@whiskeydanger.com">Let's chat</a>
                 </div>
@@ -550,6 +604,7 @@
         </section>
 
         <section class="made" aria-labelledby="made-h">
+            <div data-reveal>
             <h2 id="made-h">Other musings</h2>
             <ul class="work-list">
                 <li>
@@ -573,7 +628,21 @@
                     </div>
                 </li>
             </ul>
+            </div>
         </section>
     </main>
+    <script>
+        (function () {
+            var els = document.querySelectorAll('[data-reveal]');
+            var show = function (el) { el.classList.add('in'); };
+            if (!('IntersectionObserver' in window)) { els.forEach(show); return; }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) { show(e.target); io.unobserve(e.target); }
+                });
+            }, { rootMargin: '0px 0px -8% 0px', threshold: 0.15 });
+            els.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
 </body>
 </html>
