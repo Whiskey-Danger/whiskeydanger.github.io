@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs>
+  <linearGradient id="tcBeak" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#FFB627"/><stop offset=".52" stop-color="#FFB627"/>
+    <stop offset=".52" stop-color="#FF8A3D"/><stop offset=".76" stop-color="#FF8A3D"/>
+    <stop offset=".76" stop-color="#FF6F59"/><stop offset="1" stop-color="#FF6F59"/>
+  </linearGradient>
+  <clipPath id="tcHead"><path d="M121 138.3 L240.8 138.3 A42 42 0 0 1 279.7 196.1 L216.9 350.5 A70 70 0 0 1 85.8 346.7 L49.1 238.8 A76 76 0 0 1 121 138.3 Z"/></clipPath>
+  <clipPath id="tcCone"><path d="M-60 0 L-7 -112 Q0 -124 7 -112 L60 0 Q0 14 -60 0 Z"/></clipPath>
+  <clipPath id="tcSquircle"><rect width="512" height="512" rx="114"/></clipPath>
+</defs>
+  <g clip-path="url(#tcSquircle)">
+  <rect width="512" height="512" fill="#6CB4EE"/>
+  <path d="M121 138.3 L240.8 138.3 C254.8 138.3 267.8 145.3 275.6 156.8 C283.4 168.4 285 183.2 279.7 196.1 L216.9 350.5 C205.9 377.6 292.2 614.4 263 613.6 C233.8 612.8 -41.3 455.1 -50.7 427.5 L-29.7 349.9 C-37.6 326.7 45 190 59.2 170.1 C73.5 150.1 96.5 138.3 121 138.3 Z" fill="#2A211B"/>
+  <circle cx="216.2" cy="303.6" r="47" fill="#FFF8F0" clip-path="url(#tcHead)"/>
+  <path d="M218.4 138.3 C318 138.3 432.5 165.8 466.4 324.8 C413.4 314.2 286.2 288.8 199.3 284.6 Z" fill="url(#tcBeak)"/>
+  <path d="M192.9 242.2 C286.2 237.9 392.2 254.9 460.1 318.5" fill="none" stroke="#2A211B" stroke-width="6.4" stroke-linecap="round"/>
+  <circle cx="156.9" cy="204" r="36" fill="#7ED3B2"/>
+  <circle cx="162.2" cy="204" r="16" fill="#2A211B"/>
+  <circle cx="168.6" cy="197.6" r="5" fill="#FFF8F0"/>
+  <g transform="translate(170 146) rotate(-8)">
+    <path d="M-60 0 L-7 -112 Q0 -124 7 -112 L60 0 Q0 14 -60 0 Z" fill="#FF6F59"/>
+    <g clip-path="url(#tcCone)"><path d="M-80 -24 L80 -46 L80 -64 L-80 -42 Z" fill="#FFF8F0"/><path d="M-80 -70 L80 -92 L80 -108 L-80 -86 Z" fill="#FFF8F0"/></g>
+    <path d="M-60 0 Q0 14 60 0 L54 -13 Q0 -1 -54 -13 Z" fill="#FFB627"/>
+    <circle cx="0" cy="-121" r="18" fill="#FFB627"/>
+  </g>
+  </g>
+</svg>

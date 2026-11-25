@@ -3,8 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whiskey Danger</title>
+    <title>Whiskey Danger: AI-first technology and product leadership</title>
+    <meta name="description" content="Building applied AI since before ChatGPT. Advisory, fractional CTPO and hands-on AI work for growing companies.">
+    <meta name="theme-color" content="#F7F2E6">
+    <meta property="og:title" content="Whiskey Danger: AI-first technology and product leadership">
+    <meta property="og:description" content="Building applied AI since before ChatGPT. Advisory, fractional CTPO and hands-on AI work for growing companies.">
+    <meta property="og:image" content="https://whiskeydanger.com/og.png">
+    <meta property="og:url" content="https://whiskeydanger.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cream: #F7F2E6;
+            --ink: #2A2414;          /* the logo's warm linework, not flat black */
+            --barrel: #2B1B10;
+            --barrel-deep: #170E07;
+            --amber: #F2B347;
+            --amber-deep: #C9761E;
+            --cherry: #E24E46;
+        }
+
+
+
         * {
             margin: 0;
             padding: 0;
@@ -12,196 +36,451 @@
         }
 
         body {
-            font-family: 'Cooper Black', 'Arial Black', sans-serif;
-            background: #F7F2E6;
-            color: #1E1E1E;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--ink);
+            background: var(--cream);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .howdy, .cta, .stage-mark {
+            font-family: 'Caprasimo', 'Cooper Black', Georgia, serif;
+            font-weight: 400;
+        }
+
+        a:focus-visible {
+            outline: 3px solid var(--amber-deep);
+            outline-offset: 4px;
+            border-radius: 6px;
+        }
+
+        /* ---------- Hero ---------- */
+
+        .hero {
+            max-width: 1244px;
+            margin: 0 auto;
+            padding: 48px 32px 128px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+            grid-template-areas: "copy mark";
+            gap: 56px;
             align-items: center;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 1200px;
+        .hero-mark {
+            grid-area: mark;
+        }
+
+        .hero-mark img {
+            display: block;
             width: 100%;
-            text-align: center;
-        }
-
-        .logo-container {
-            margin-bottom: 40px;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        .logo {
-            max-width: 500px;
-            width: 100%;
+            max-width: 420px;
             height: auto;
-            filter: drop-shadow(0 8px 0px rgba(0, 0, 0, 0.15));
+            margin-left: auto;
+            filter: drop-shadow(0 8px 0 rgba(42, 36, 20, 0.12));
         }
 
-        .tagline {
-            font-size: 1.8rem;
-            font-weight: 900;
-            margin-bottom: 50px;
-            color: #D88B2D;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: fadeInUp 1s ease-out 0.3s backwards;
+        .hero-copy {
+            grid-area: copy;
+            max-width: 640px;
         }
 
-        .cta-button {
+        .howdy {
+            font-size: clamp(5.5rem, 15vw, 11.5rem);
+            line-height: 1;
+            margin: 0 0 12px -0.03em;
+            color: var(--ink);
+            text-shadow: 0 0.04em 0 rgba(42, 36, 20, 0.14);
+        }
+
+        .hero h1 {
+            font-size: clamp(1.3rem, 1.9vw, 1.55rem);
+            line-height: 1.3;
+            max-width: 32ch;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            max-width: 56ch;
+        }
+
+        .hero p + p {
+            margin-top: 14px;
+        }
+
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px 28px;
+            margin-top: 40px;
+        }
+
+        .cta {
             display: inline-block;
-            padding: 20px 60px;
+            padding: 14px 38px 16px;
             font-size: 1.3rem;
-            font-weight: 900;
-            color: #F7F2E6;
-            background: #E24E46;
+            color: var(--cream);
             text-decoration: none;
-            border-radius: 60px;
-            border: 5px solid #1E1E1E;
-            transition: all 0.2s ease;
-            box-shadow: 0 8px 0 #1E1E1E;
-            animation: fadeInUp 1s ease-out 0.6s backwards;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: var(--cherry);
+            border: 3px solid var(--ink);
+            border-radius: 999px;
+            box-shadow: 0 6px 0 var(--ink);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .cta:hover {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 var(--ink);
+        }
+
+        .cta:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 var(--ink);
+        }
+
+        .links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .text-link {
+            color: var(--ink);
+            font-weight: 500;
+            text-decoration-color: var(--amber-deep);
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+        }
+
+        /* ---------- The arc ---------- */
+
+        .arc {
             position: relative;
+            background: var(--barrel);
+            color: var(--cream);
+            padding: 56px 32px 120px;
         }
 
-        .cta-button:hover {
-            transform: translateY(4px);
-            box-shadow: 0 4px 0 #1E1E1E;
+        .arc::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -27px;
+            height: 28px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 28' preserveAspectRatio='none'%3E%3Cpath d='M0 16 Q30 4 60 16 T120 16 V28 H0Z' fill='%232B1B10'/%3E%3C/svg%3E") repeat-x;
+            background-size: 160px 28px;
         }
 
-        .cta-button:active {
-            transform: translateY(8px);
-            box-shadow: 0 0 0 #1E1E1E;
+        .arc-inner {
+            max-width: 1180px;
+            margin: 0 auto;
         }
 
-        .work {
+        .arc-head {
+            max-width: 680px;
+            margin-bottom: 56px;
+        }
+
+        .arc h2 {
+            font-size: clamp(2.3rem, 5vw, 3.6rem);
+            line-height: 1.05;
+            margin-bottom: 18px;
+        }
+
+        .arc-head p {
+            font-size: 1.2rem;
+            color: rgba(247, 242, 230, 0.82);
+        }
+
+        .stages {
+            list-style: none;
+            border-top: 2px dotted rgba(242, 179, 71, 0.4);
+        }
+
+        .stage {
+            display: grid;
+            grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+            gap: 12px 56px;
+            padding: 36px 0 40px;
+            border-bottom: 2px dotted rgba(242, 179, 71, 0.4);
+        }
+
+        .stage-mark {
+            display: block;
+            font-size: clamp(2.6rem, 5vw, 3.8rem);
+            line-height: 1;
+            color: var(--amber);
+            margin-bottom: 10px;
+        }
+
+        .stage h3 {
+            font-size: 1.45rem;
+            line-height: 1.2;
+            max-width: 16em;
+        }
+
+        .stage-body p {
+            max-width: 60ch;
+        }
+
+        .stage-situation {
+            color: rgba(247, 242, 230, 0.82);
+        }
+
+        .stage-help {
+            margin-top: 16px;
+            padding-left: 18px;
+            border-left: 3px solid var(--amber);
+        }
+
+        .stage-help b {
+            color: var(--amber);
+            font-weight: 700;
+        }
+
+        .arc-close {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 28px 48px;
             margin-top: 64px;
-            animation: fadeInUp 1s ease-out 0.9s backwards;
         }
 
-        .work-label {
-            font-size: 0.95rem;
-            opacity: 0.55;
-            margin-bottom: 14px;
+        .arc-close p {
+            font-size: 1.3rem;
+            line-height: 1.5;
+            max-width: 44ch;
+        }
+
+        .arc .cta {
+            border-color: var(--barrel-deep);
+            box-shadow: 0 6px 0 var(--barrel-deep);
+        }
+
+        .arc .cta:hover {
+            box-shadow: 0 3px 0 var(--barrel-deep);
+        }
+
+        .arc .cta:active {
+            box-shadow: 0 0 0 var(--barrel-deep);
+        }
+
+        .arc a:focus-visible {
+            outline-color: var(--amber);
+        }
+
+        /* ---------- Other musings ---------- */
+
+        .made {
+            max-width: 1244px;
+            margin: 0 auto;
+            padding: 80px 32px 96px;
+        }
+
+        .made h2 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
         }
 
         .work-list {
             list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 14px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
         }
 
         .work-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 20px 8px 8px;
-            color: #1E1E1E;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-areas: "icon badge" "text text";
+            align-items: start;
+            align-content: start;
+            gap: 14px;
+            height: 100%;
+            padding: 14px 16px 18px;
+            color: var(--ink);
             text-decoration: none;
-            text-align: left;
             background: #FFFBEF;
-            border: 3px solid #1E1E1E;
+            border: 3px solid var(--ink);
             border-radius: 18px;
-            box-shadow: 0 4px 0 #1E1E1E;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 0 var(--ink);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
         .work-item:hover {
             transform: translateY(2px);
-            box-shadow: 0 2px 0 #1E1E1E;
+            box-shadow: 0 2px 0 var(--ink);
         }
 
         .work-item:active {
             transform: translateY(4px);
-            box-shadow: 0 0 0 #1E1E1E;
-        }
-
-        .work-item:focus-visible,
-        .cta-button:focus-visible {
-            outline: 3px solid #D88B2D;
-            outline-offset: 4px;
+            box-shadow: 0 0 0 var(--ink);
         }
 
         .work-item img {
+            grid-area: icon;
             width: 46px;
             height: 46px;
             border-radius: 12px;
-            border: 2.5px solid #1E1E1E;
+            border: 2.5px solid var(--ink);
             background: #007AFF;
+        }
+
+        .work-item > span:not(.soon-tag) {
+            grid-area: text;
         }
 
         .work-item b {
             display: block;
-            font-size: 1.1rem;
+            font-family: 'Caprasimo', 'Cooper Black', Georgia, serif;
+            font-size: 1.15rem;
             font-weight: 400;
+            line-height: 1.3;
+        }
+
+        .work-item.soon {
+            box-shadow: none;
+            border-style: dashed;
+        }
+
+        .soon-tag {
+            grid-area: badge;
+            justify-self: end;
+            padding: 1px 9px 2px;
+            font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: var(--amber);
+            border: 2px solid var(--ink);
+            border-radius: 999px;
         }
 
         .work-item small {
             display: block;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            opacity: 0.7;
+            margin-top: 2px;
+            text-wrap: pretty;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            opacity: 0.72;
+        }
+
+        /* ---------- Small screens ---------- */
+
+        @media (max-width: 820px) {
+            .hero {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-areas: "mark" "copy";
+                gap: 20px;
+                padding: 28px 22px 104px;
+            }
+
+            .hero-mark img {
+                max-width: 250px;
+                margin: 0 auto;
+            }
+
+            .arc {
+                padding: 40px 22px 96px;
+            }
+
+            .stage {
+                grid-template-columns: minmax(0, 1fr);
+                padding: 28px 0 32px;
+            }
+
+            .arc-close p {
+                font-size: 1.15rem;
+            }
+
+            .made {
+                padding: 64px 22px 80px;
+            }
+
+            .work-list {
+                grid-template-columns: minmax(0, 1fr);
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation: none !important; transition: none !important; }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .logo {
-                max-width: 300px;
-            }
-
-            .tagline {
-                font-size: 1.2rem;
-            }
-
-            .cta-button {
-                padding: 15px 40px;
-                font-size: 1rem;
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo-container">
-            <img src="whiskey-danger-logo.png" alt="Whiskey Danger" class="logo">
-        </div>
+    <main>
+        <header class="hero">
+            <div class="hero-mark">
+                <img src="whiskey-danger-logo.png" alt="Whiskey Danger" width="500" height="500">
+            </div>
 
-        <a href="mailto:howdy@whiskeydanger.com" class="cta-button">Howdy, Partner - Let's Chat!</a>
+            <div class="hero-copy">
+                <p class="howdy" aria-hidden="true">Howdy.</p>
+                <h1>I've been building applied AI since before ChatGPT made it everyone's&nbsp;plan.</h1>
+                <p>I'm Jake, a technology and product executive with 15 years in the industry. I've been a hands-on engineer, a startup's first engineer and then its CTO through a sale, and an advisor to private-equity-backed companies. Today I lead innovation, applied AI and data science at a market intelligence company.</p>
+                <p>I help founders and leadership teams build AI into their products and the way they work.</p>
+                <div class="cta-row">
+                    <a class="cta" href="mailto:howdy@whiskeydanger.com">Let's chat</a>
+                    <span class="links">
+                        <a class="text-link" href="mailto:howdy@whiskeydanger.com">howdy@whiskeydanger.com</a>
+                        <a class="text-link" href="https://www.linkedin.com/in/jpwidmer/">LinkedIn</a>
+                    </span>
+                </div>
+            </div>
+        </header>
 
-        <section class="work" aria-labelledby="work-label">
-            <p class="work-label" id="work-label">Things we've made</p>
+        <section class="arc" aria-labelledby="arc-h">
+            <div class="arc-inner">
+                <div class="arc-head">
+                    <h2 id="arc-h">Where I can help</h2>
+                    <p>I've worked through each of these stages myself, and AI changes what matters at every one of them.</p>
+                </div>
+
+                <ul class="stages">
+                    <li class="stage">
+                        <h3><span class="stage-mark">Start</span> Going from 0 to 1</h3>
+                        <div class="stage-body">
+                            <p class="stage-situation">You have an idea and maybe a few customers waiting, but no product yet. Every early decision feels like it'll stick around forever, and most of them will.</p>
+                            <p class="stage-help"><b>How I help:</b> deciding where AI belongs in the product from day one, choosing an architecture you won't regret, and hiring your first engineers.</p>
+                        </div>
+                    </li>
+                    <li class="stage">
+                        <h3><span class="stage-mark">Scale</span> Going from 1 to 2</h3>
+                        <div class="stage-body">
+                            <p class="stage-situation">Something's working. Now the team is growing faster than the way you work, your data is scattered across a dozen tools, and every competitor says they have AI.</p>
+                            <p class="stage-help"><b>How I help:</b> stepping in as a part-time CTPO, building data and ML systems that turn what you know into product, and taking the busywork off your team.</p>
+                        </div>
+                    </li>
+                    <li class="stage">
+                        <h3><span class="stage-mark">Rewire</span> Changing how an established company works</h3>
+                        <div class="stage-body">
+                            <p class="stage-situation">You have a solid business and a team that's done things the same way for years. You can tell AI will change how all of it works, but not where to start.</p>
+                            <p class="stage-help"><b>How I help:</b> picking the first places where it clearly pays off, then changing how the company builds and runs so the change sticks.</p>
+                        </div>
+                    </li>
+                    <li class="stage">
+                        <h3><span class="stage-mark">Exit</span> Getting through diligence</h3>
+                        <div class="stage-body">
+                            <p class="stage-situation">A buyer or investor is about to look under the hood and ask hard questions about your technology and data. You'd like to know what they'll find before they do.</p>
+                            <p class="stage-help"><b>How I help:</b> getting your house in order ahead of time, or helping investors tell real AI from a demo in a target or portfolio company.</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="arc-close">
+                    <p>I work as an advisor, as a fractional CTPO, or on a focused project like an AI roadmap or diligence prep. Tell me where you are and we'll figure out what fits.</p>
+                    <a class="cta" href="mailto:howdy@whiskeydanger.com">Let's chat</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="made" aria-labelledby="made-h">
+            <h2 id="made-h">Other musings</h2>
             <ul class="work-list">
                 <li>
                     <a class="work-item" href="/pacachat/">
@@ -209,8 +488,22 @@
                         <span><b>Pacachat</b><small>Private AI chat for iPhone and iPad</small></span>
                     </a>
                 </li>
+                <li>
+                    <div class="work-item soon">
+                        <img src="/venn/assets/venn-mark.svg" alt="" style="background: #0C0B0E">
+                        <span><b>Venn</b><small>Photos for the people you're actually close to</small></span>
+                        <span class="soon-tag">Planning</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="work-item soon">
+                        <img src="/toucan/assets/toucan-mark.svg" alt="" style="background: #6CB4EE">
+                        <span><b>Toucan</b><small>Still under wraps</small></span>
+                        <span class="soon-tag">Coming soon</span>
+                    </div>
+                </li>
             </ul>
         </section>
-    </div>
+    </main>
 </body>
 </html>
